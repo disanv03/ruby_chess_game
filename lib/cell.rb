@@ -1,9 +1,9 @@
 class Cell
-  attr_reader :content, :name
+  attr_reader :content, :coordinate
 
-  def initialize(piece=nil, name=nil)
+  def initialize(piece=nil, coordinate=nil)
     @content = piece
-    @name = name
+    @coordinate = coordinate
   end
 
   def empty?
