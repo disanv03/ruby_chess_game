@@ -1,7 +1,7 @@
 require_relative 'cell'
 
 class Board
-  def initialize(fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+  def initialize()
     @board = Array.new(8) { Array.new(8, nil) }
     @active = nil
     @castle = nil
@@ -10,7 +10,7 @@ class Board
     @full = nil
   end
 
-  def make_board(fen)
+  def make_board(fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     parts = fen.split(' ')
     pieces = parts[0].split('/')
     @active = parts[1]
@@ -24,15 +24,18 @@ class Board
     pieces.each do |rank|
       col_index = 0
       rank.each_char do |piece|
-        if piece.match?(/[[:alpha:]]/)
+        case piece
+        when /^[rnbqkp]$/i
           @board[rank_index][col_index] = Cell.new(piece, "#{col[col_index]}#{8 - rank_index}")
           col_index += 1
-        elsif piece.match?(/[[:digit:]]/)
+        when /^[1-8]$/
           digit = piece.to_i
-          digit.times do |i|
+          digit.times do
             @board[rank_index][col_index] = Cell.new(nil, "#{col[col_index]}#{8 - rank_index}")
             col_index += 1
           end
+        else
+          raise ArgumentError, "Unexpected character in piece notation: #{piece}"
         end
      end
       rank_index += 1
