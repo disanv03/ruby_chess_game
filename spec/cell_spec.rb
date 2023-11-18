@@ -1,4 +1,4 @@
-require_relative '../lib/cell.rb'
+require_relative '../lib/cell'
 
 describe Cell do
   context 'on empty initialize' do

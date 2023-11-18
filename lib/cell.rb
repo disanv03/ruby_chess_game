@@ -9,5 +9,10 @@ class Cell
   def empty?
     @content.nil?
   end
+
+  def to_fen
+    @content.nil? ? '1' : @content
+  end
+
 end
 

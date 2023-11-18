@@ -1,4 +1,4 @@
-require_relative '../lib/board.rb'
+require_relative '../lib/board'
 
 describe Board do
   context 'on initialize' do
@@ -102,6 +102,16 @@ describe Board do
         expect(active).to eq('b')
       end
     end
+    context '#make_fen' do
+      subject(:get_fen) { described_class.new }
+
+      it 'generates and outputs FEN notation from a given board state' do
+        get_fen.make_board
+        fen = get_fen.make_fen
+        expect(fen).to eq('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+      end
+    end
+
   end
 end
 

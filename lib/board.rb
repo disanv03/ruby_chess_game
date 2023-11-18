@@ -23,24 +23,44 @@ class Board
     rank_index = 0 # upgrade the rank number coordinate
     pieces.each do |rank|
       col_index = 0
-      rank.each_char do |piece|
-        case piece
+      rank.each_char do |piece_or_digit|
+        case piece_or_digit
         when /^[rnbqkp]$/i
+          piece = piece_or_digit
           @board[rank_index][col_index] = Cell.new(piece, "#{col[col_index]}#{8 - rank_index}")
           col_index += 1
         when /^[1-8]$/
-          digit = piece.to_i
+          digit = piece_or_digit.to_i
           digit.times do
             @board[rank_index][col_index] = Cell.new(nil, "#{col[col_index]}#{8 - rank_index}")
             col_index += 1
           end
         else
-          raise ArgumentError, "Unexpected character in piece notation: #{piece}"
+          raise ArgumentError, "Unexpected character in piece notation: #{piece_or_digit}"
         end
      end
       rank_index += 1
     end
   end
 
+  def make_fen
+    [board_to_fen, @active, @castle, @passant, @half, @full].join(' ')
+  end
+
+  private
+
+  def board_to_fen
+    str = []
+    @board.each.with_index(1) do |rank, index|
+      rank.each { |cell| str << cell.to_fen }
+      str << '/' unless index == rank.length
+    end
+    parsed = []
+    str.chunk { |el| el == '1' }.each do |is_one, chunk|
+      parsed << (is_one ? chunk.sum(&:to_i) : chunk.join)
+    end
+    parsed.join
+  end
+    
 end
 
