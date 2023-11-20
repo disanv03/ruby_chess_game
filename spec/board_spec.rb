@@ -117,6 +117,7 @@ describe Board do
         subject(:coords) { described_class.new }
 
         it 'takes an array of 2 elements and returns the right chess notation' do
+          expect(coords.arr_to_std_chess([1,2])).to eq('c7')
           expect(coords.arr_to_std_chess([0, 0])).to eq('a8')
           expect(coords.arr_to_std_chess([4, 4])).to eq('e4')
           expect(coords.arr_to_std_chess([7, 7])).to eq('h1')
@@ -132,6 +133,7 @@ describe Board do
 
         it 'takes a string of chess notation and returns the right array coordinates' do
           coords.make_board
+          expect(coords.std_chess_to_arr('c7')).to eq([1, 2])
           expect(coords.std_chess_to_arr('a8')).to eq([0, 0])
           expect(coords.std_chess_to_arr('e4')).to eq([4, 4])
           expect(coords.std_chess_to_arr('h1')).to eq([7, 7])

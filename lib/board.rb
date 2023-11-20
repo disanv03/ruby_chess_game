@@ -51,19 +51,16 @@ class Board
 
   def arr_to_std_chess(input)
     return nil unless input.join =~ /^[0-7]{2}$/
-    letter = ('a'..'h').to_a
-    num = (1..8).to_a.reverse
-    "#{letter[input[0]]}#{num[input[1]]}"
+    letter = (input[1] + 'a'.ord).chr
+    num = 8 - input[0]
+    "#{letter}#{num}"
   end
 
   def std_chess_to_arr(input)
-    coords = input.chars
-    return nil unless coords.length == 2
-    return nil unless ('a'..'h').include?(coords[0])
-    return nil unless (1..8).include?(coords[1].to_i)
-
-    lookup = Hash['a', 0, 'b', '1', 'c', 2, 'd', 3, 'e', 4, 'f', 5, 'g', 6, 'h', 7]
-    [lookup[coords[0]], 8 - coords[1].to_i]
+    return nil unless input =~ /^[a-h][1-8]$/
+      x = input[0].ord - 'a'.ord
+      y = 8 - input[1].to_i
+      [y, x]
   end
 
   def cell(input)
