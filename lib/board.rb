@@ -1,6 +1,8 @@
 require_relative 'cell'
 
 class Board
+  attr_accessor :board
+  
   def initialize()
     @board = Array.new(8) { Array.new(8, nil) }
     @active = nil
@@ -45,6 +47,28 @@ class Board
 
   def make_fen
     [board_to_fen, @active, @castle, @passant, @half, @full].join(' ')
+  end
+
+  def arr_to_std_chess(input)
+    return nil unless input.join =~ /^[0-7]{2}$/
+    letter = ('a'..'h').to_a
+    num = (1..8).to_a.reverse
+    "#{letter[input[0]]}#{num[input[1]]}"
+  end
+
+  def std_chess_to_arr(input)
+    coords = input.chars
+    return nil unless coords.length == 2
+    return nil unless ('a'..'h').include?(coords[0])
+    return nil unless (1..8).include?(coords[1].to_i)
+
+    lookup = Hash['a', 0, 'b', '1', 'c', 2, 'd', 3, 'e', 4, 'f', 5, 'g', 6, 'h', 7]
+    [lookup[coords[0]], 8 - coords[1].to_i]
+  end
+
+  def cell(input)
+    coords = std_chess_to_arr(input)
+    @board[coords[0]][coords[1]]
   end
 
   private

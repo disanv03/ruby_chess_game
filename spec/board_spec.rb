@@ -112,6 +112,46 @@ describe Board do
       end
     end
 
+    context 'coordinates conversions' do
+      context '#arr_to_std_chess' do
+        subject(:coords) { described_class.new }
+
+        it 'takes an array of 2 elements and returns the right chess notation' do
+          expect(coords.arr_to_std_chess([0, 0])).to eq('a8')
+          expect(coords.arr_to_std_chess([4, 4])).to eq('e4')
+          expect(coords.arr_to_std_chess([7, 7])).to eq('h1')
+        end
+
+        it 'returns nil if coordinate are out of range' do
+          expect(coords.arr_to_std_chess([8, 8])).to be_nil
+        end
+      end
+
+      context '#std_chess_to_arr' do
+        subject(:coords) { described_class.new }
+
+        it 'takes a string of chess notation and returns the right array coordinates' do
+          coords.make_board
+          expect(coords.std_chess_to_arr('a8')).to eq([0, 0])
+          expect(coords.std_chess_to_arr('e4')).to eq([4, 4])
+          expect(coords.std_chess_to_arr('h1')).to eq([7, 7])
+        end
+
+        it 'returns nil if notation are out of range' do
+          expect(coords.std_chess_to_arr('j8')).to be_nil
+        end
+      end
+    end
+
+    context '#cell' do 
+      subject(:cells) { described_class.new }
+      
+      it 'takes a string notation and returns the correct cell object' do
+        cells.make_board
+        test_cell = cells.cell('a8')
+        expect(test_cell).to have_attributes(coordinate: 'a8')
+      end
+    end
   end
 end
 
