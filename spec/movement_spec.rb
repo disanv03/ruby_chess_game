@@ -20,23 +20,38 @@ describe Movement do
 
   context '#horizontal_move' do
     let(:board) { Board.new }
-    subject(:horizontal) { described_class.new(board) }
+    subject(:rook_test) { described_class.new(board) }
 
-    context 'when there are no other pieces on the board' do
-      it 'provides the correct list of movement options' do
+    context 'with a rook' do
+      context 'on an empty board' do
+      it 'when rook is on a8, provides the correct list of moves options' do
         board.make_board('r7/8/8/8/8/8/8/8 b - - 1 2')
+        cell = board.cell('a8')
+        expect(rook_test.horizontal_move(cell)).to eq(%w(b8 c8 d8 e8 f8 g8 h8))
       end
-    end
 
-    context 'when there is a friendly piece on the path' do
-      it 'returns the correct list of movemnet options' do
+      it 'when the rook is on d4, provides the correct list of moves options' do
+        board.make_board('8/8/8/8/3r4/8/8/8 b - - 1 2')
+        cell = board.cell('d4')
+        expect(rook_test.horizontal_move(cell)).to eq(%w(a4 b4 c4 e4 f4 g4 h4))
       end
     end
+  end
 
-    context 'when there is an enemy piece on the path' do
-      it 'returns the correct list of movement options including a capture' do
+      context 'when there is a friendly piece on the path' do
+        it 'when the rook starts on a8, return the correct list of moves' do
+        end
+
+        it 'when the rook is on d4, provides the correct list of moves' do
+        end
       end
-    end
+
+      context 'when there is an enenmy piece on the path' do
+        it 'when the rook is on a8, return the correct list of moves, including capture' do
+        end
+        it 'when the rook is on d4, provides the correct list of moves' do
+        end
+      end
   end
 
   context '#valid_moves' do
