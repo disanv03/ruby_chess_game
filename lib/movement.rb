@@ -5,18 +5,33 @@ class Movement
 
   def horizontal_move(cell)
     result = []
-    piece = cell.content.downcase
-    coord = cell.coordinate.chars
-    rank = coord[1]
-    col_x = coord[0].ord
-    offset = piece == 'k' ? 1 : 7
-   
-    (1..offset).each do |i|
-      right = col_x + i
-      left = col_x - i
-      result << "#{right.chr}#{rank}" if ('a'.ord..'h'.ord).include?(right)
-      result << "#{left.chr}#{rank}" if ('a'.ord..'h'.ord).include?(left)
+    col_chrs = ('a'..'h').to_a
+    piece, file, rank =  cell.content, cell.coordinate[0], cell.coordiante[1]
+    file_index = col_chrs.index(file)
+    offset = piece_offset(piece, 'h') 
+
+    (-offset..offset).each do |i|
+      next if i == 0
+      new_file_index = file_index + i
+      next unless new_file_index.between?(0, 7)
+
+      target_cell = @board.cell(col_chrs[new_file_index], rank)
+      result << target_cell.to_s if target_cell && (target_cell.empty? || target_cell.capture?(piece))
     end
     result.sort
+  end
+
+  private
+
+  def piece_offset(piece, direction)
+    offsets = {
+      'r' => { 'h' => 7, 'v' => 7, 'd' => nil, 'c' => nil },
+      'q' => { 'h' => 7, 'v' => 7, 'd' => 7, 'c' => nil },
+      'p' => { 'h' => nil, 'v' => 1, 'd' => 1, 'c' => nil },
+      'b' => { 'h' => nil, 'v' => nil, 'd' => 7, 'c' => nil },
+      'k' => { 'h' => 1, 'v' => 1, 'd' => 1, 'c' => nil },
+      'n' => { 'h' => nil, 'v' => nil, 'd' => nil, 'c' => [2, 1] }
+    }
+    offsets[piece.downcase][direction]
   end
 end
