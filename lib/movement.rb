@@ -10,39 +10,26 @@ class Movement
     file_index = col_chrs.index(file)
     offset = piece_offset(piece, 'h') 
 
-    # left direction
-    (1..offset).each do |i|
-      new_file_index = file_index - i
-      break unless new_file_index.between?(0,7)
+    add_moves_in_direction = lambda do |direction|
+        (1..offset).each do |i|
+        new_file_index = file_index + i * direction
+        break unless new_file_index.between?(0, 7)
 
-      target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
-      if target_cell.empty?
-        result << target_cell.to_s
-      elsif target_cell.capture?(piece)
-        result << target_cell.to_s
-        break
-      else
-        # case of friendly piece
-        break
+        target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
+        if target_cell.empty?
+          result << target_cell.to_s
+        elsif target_cell.capture?(piece)
+          result << targe_cell.to_s
+          break
+        else
+          # case when we got a friendly piece
+          break
+        end
       end
     end
-
-    # right direction
-    (1..offset).each do |i|
-      new_file_index = file_index + i
-      break unless new_file_index.between?(0,7)
-
-      target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
-      if target_cell.empty?
-        result << target_cell.to_s
-      elsif target_cell.capture?(piece)
-        result << target_cell.to_s
-        break
-      else
-        # case of friendly piece
-        break
-      end
-    end
+    
+    add_moves_in_direction.call(-1) #left
+    add_moves_in_direction.call(1) # right
 
     result.sort
   end
