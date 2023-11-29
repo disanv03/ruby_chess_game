@@ -3,26 +3,51 @@ class Movement
     @board = board
   end
 
-  def horizontal_move(cell)
+  def horizontal_move(starting_cell)
     result = []
     col_chrs = ('a'..'h').to_a
-    piece, file, rank =  cell.content, cell.coordinate[0], cell.coordinate[1]
+    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1]
     file_index = col_chrs.index(file)
     offset = piece_offset(piece, 'h') 
 
-    (-offset..offset).each do |i|
-      next if i == 0
-      new_file_index = file_index + i
-      next unless new_file_index.between?(0, 7)
+    # left direction
+    (1..offset).each do |i|
+      new_file_index = file_index - i
+      break unless new_file_index.between?(0,7)
 
       target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
-      result << target_cell.to_s if target_cell && (target_cell.empty? || target_cell.capture?(piece))
+      if target_cell.empty?
+        result << target_cell.to_s
+      elsif target_cell.capture?(piece)
+        result << target_cell.to_s
+        break
+      else
+        # case of friendly piece
+        break
+      end
     end
+
+    # right direction
+    (1..offset).each do |i|
+      new_file_index = file_index + i
+      break unless new_file_index.between?(0,7)
+
+      target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
+      if target_cell.empty?
+        result << target_cell.to_s
+      elsif target_cell.capture?(piece)
+        result << target_cell.to_s
+        break
+      else
+        # case of friendly piece
+        break
+      end
+    end
+
     result.sort
   end
 
   private
-
   def piece_offset(piece, direction)
     offsets = {
       'r' => { 'h' => 7, 'v' => 7, 'd' => nil, 'c' => nil },
@@ -34,4 +59,5 @@ class Movement
     }
     offsets[piece.downcase][direction]
   end
+
 end

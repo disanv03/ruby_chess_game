@@ -15,9 +15,17 @@ describe Cell do
 
   context 'on piece initialize' do
     subject(:cell_knight) { described_class.new('N', 'b1') }
-    it 'stores the correct information' do
-      expect(cell_knight.empty?).to be_falsey
+    it 'stores the correct coordinate' do
       expect(cell_knight.coordinate).to eq('b1')
+    end
+
+    it 'empty? returns the right status' do
+      expect(cell_knight.empty?).to be_falsey
+    end
+
+    it 'correctly identifiers whether another piece can attack' do
+      expect(cell_knight.capture?('n')).to be_truthy
+      expect(cell_knight.capture?('K')).to be_falsey
     end
   end
 end
