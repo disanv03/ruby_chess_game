@@ -51,7 +51,6 @@ describe Movement do
           expect(rook_test.horizontal_move(cell)).to eq(%w[a4 b4 c4])
         end
       end
-    end
 
       context 'when there is an enenmy piece on the path' do
         it 'when the rook is on a8, return the correct list of moves, including capture' do
@@ -67,6 +66,7 @@ describe Movement do
         it 'when the Rook is on d4, returns the correct list with two captures on either side only' do
         end
       end
+    end
       
       context 'with a king' do
         subject(:king_test) { described_class.new(board) }
