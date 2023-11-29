@@ -6,7 +6,7 @@ class Movement
   def horizontal_move(cell)
     result = []
     col_chrs = ('a'..'h').to_a
-    piece, file, rank =  cell.content, cell.coordinate[0], cell.coordiante[1]
+    piece, file, rank =  cell.content, cell.coordinate[0], cell.coordinate[1]
     file_index = col_chrs.index(file)
     offset = piece_offset(piece, 'h') 
 
@@ -15,7 +15,7 @@ class Movement
       new_file_index = file_index + i
       next unless new_file_index.between?(0, 7)
 
-      target_cell = @board.cell(col_chrs[new_file_index], rank)
+      target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
       result << target_cell.to_s if target_cell && (target_cell.empty? || target_cell.capture?(piece))
     end
     result.sort

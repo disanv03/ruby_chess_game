@@ -63,8 +63,8 @@ class Board
       [y, x]
   end
 
-  def cell(input)
-    coords = std_chess_to_arr(input)
+  def cell(coordinate)
+    coords = std_chess_to_arr(coordinate)
     @board[coords[0]][coords[1]]
   end
 
