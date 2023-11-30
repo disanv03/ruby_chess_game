@@ -54,16 +54,35 @@ describe Movement do
 
       context 'when there is an enenmy piece on the path' do
         it 'when the rook is on a8, return the correct list of moves, including capture' do
+          board.make_board('r4B2/8/8/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('a8')
+          expect(rook_test.horizontal_move(cell)).to eq(%w(b8 c8 d8 e8 f8))
         end
         it 'when the rook is on d4, provides the correct list of moves' do
+          board.make_board('8/8/8/8/3rB3/8/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          expect(rook_test.horizontal_move(cell)).to eq(%w(a4 b4 c4 e4))
         end
       end
 
       context 'when there are multiple enemy pieces on the path' do
         it 'when the Rook is on a8, returns the correct list with one capture only' do
+          board.make_board('r4BN1/8/8/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('a8')
+          expect(rook_test.horizontal_move(cell)).to eq(%w(b8 c8 d8 e8 f8))
         end
-
         it 'when the Rook is on d4, returns the correct list with two captures on either side only' do
+          board.make_board('8/8/8/8/1RPrBN2/8/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          expect(rook_test.horizontal_move(cell)).to eq(%w(c4 e4))
+        end
+      end
+
+      context 'when there is a friendly piece on one side, and an enemy piece on the other' do
+        it 'the rook from d4, returns the correct list of available moves, including a capture' do
+          board.make_board('8/8/8/8/2prBN2/8/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          expect(rook_test.horizontal_move(cell)).to eq(%w(e4))
         end
       end
     end
@@ -84,17 +103,58 @@ describe Movement do
             expect(king_test.horizontal_move(cell)).to eq(%w(c4 e4))
           end
         end
+
+        context 'when there is a friendly piece beside the king' do
+          it 'starting from a8, return the correct list of moves' do
+            board.make_board('kn6/8/8/8/8/8/8/8 b - - 1 2')
+            cell = board.cell('a8')
+            expect(king_test.horizontal_move(cell)).to eq(%w())
+          end
+
+          it 'starting from d4, return the correct list of available moves' do
+            board.make_board('8/8/8/8/2nkp3/8/8/8 b - - 1 2')
+            cell = board.cell('d4')
+            expect(king_test.horizontal_move(cell)).to eq(%w())
+          end
+        end
+
+        context 'when there is an enemy piece on the path' do
+          it 'King start from a8, return the correct list of valid moves including capture' do
+            board.make_board('kN6/8/8/8/8/8/8/8 b - - 1 2')
+            cell = board.cell('a8')
+            expect(king_test.horizontal_move(cell)).to eq(%w(b8))
+          end
+
+          it 'the king starting from d4, retrun the correct list of moves includings both captures' do
+            board.make_board('8/8/8/8/2PkP3/8/8/8 b - - 1 2')
+            cell = board.cell('d4')
+            expect(king_test.horizontal_move(cell)).to eq(%w(c4 e4))
+          end
+        end
+
+        context' where there are multiple enemy pieces on the path' do
+          it 'the king from a8, return the correct list moves including the correct capture' do
+            board.make_board('kNK5/8/8/8/8/8/8/8 b - - 1 2')
+            cell = board.cell('a8')
+            expect(king_test.horizontal_move(cell)).to eq(%w(b8))
+          end
+
+          it 'starting from d4, returns correct list of moves including correct capture' do
+            board.make_board('8/8/8/8/1PPkPP2/8/8/8 b - - 1 2')
+            cell = board.cell('d4')
+            expect(king_test.horizontal_move(cell)).to eq(%w(c4 e4))
+          end
+
+          it 'starting from d4 with a friendly piece on one side, and enemy on the other' do
+            board.make_board('8/8/8/8/2pkP3/8/8/8 b - - 1 2')
+            cell = board.cell('d4')
+            expect(king_test.horizontal_move(cell)).to eq(%w(e4))
+          end
+
+
+        end
       end
 
   end
 
-  context '#valid_moves' do
-    context 'when provided a cell with a rook' do
-      it 'moves the piece in bounds as expected and returns true' do
-      end
-
-      it 'does not move the piece and return false' do
-      end
-    end
-  end
 end

@@ -19,7 +19,7 @@ class Movement
         if target_cell.empty?
           result << target_cell.to_s
         elsif target_cell.capture?(piece)
-          result << targe_cell.to_s
+          result << target_cell.to_s
           break
         else
           # case when we got a friendly piece
