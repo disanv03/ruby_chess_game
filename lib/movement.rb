@@ -34,6 +34,36 @@ class Movement
     result.sort
   end
 
+  def vertical_move(starting_cell)
+    result = []
+    col_chrs = ('a'..'h').to_a
+    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1].to_i
+    file_index = col_chrs.index(file)
+    rank_number = 8 - rank
+    offset = piece_offset(piece, 'v') 
+
+    add_moves_in_direction = lambda do |direction|
+      (1..offset).each do |i|
+        new_rank_index = rank_number + i * direction
+        break unless new_rank_index.between?(0, 7)
+        target_cell = @board.board[new_rank_index][file_index]
+        if target_cell.empty?
+          result << target_cell.to_s
+        elsif target_cell.capture?(piece)
+          result << target_cell.to_s
+          break
+        else
+          # case we got a friendly piece
+          break
+        end
+    end
+  end
+    add_moves_in_direction.call(-1)
+    add_moves_in_direction.call(1)
+
+    result.sort
+  end
+
   private
   def piece_offset(piece, direction)
     offsets = {

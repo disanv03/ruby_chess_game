@@ -157,13 +157,15 @@ describe Movement do
   end
 
   context '#find_vertical_moves works' do
-    let(:board) { Board.new }
+    let(:board) { Board.new }
     context 'with a rook' do
       subject(:rook_test) { described_class.new(board) }
 
       context 'on an empty board' do
         it 'rook starts on a8, return the correct list of available moves' do
           board.make_board('r7/8/8/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('a8')
+          expect(rook_test.vertical_move(cell)).to eq(%w[a1 a2 a3 a4 a5 a6 a7])
         end
 
         it 'rook start on d4, return the correct list of available moves' do
