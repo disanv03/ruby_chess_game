@@ -154,7 +154,64 @@ describe Movement do
 
         end
       end
+  end
 
+  context '#find_vertical_moves works' do
+    let(:board) { Board.new }
+    context 'with a rook' do
+      subject(:rook_test) { described_class.new(board) }
+
+      context 'on an empty board' do
+        it 'rook starts on a8, return the correct list of available moves' do
+          board.make_board('r7/8/8/8/8/8/8/8 b - - 1 2')
+        end
+
+        it 'rook start on d4, return the correct list of available moves' do
+          board.make_board('8/8/8/8/3r4/8/8/8 b - - 1 2')
+        end
+      end
+
+      context 'where there is a friendly piece on the path' do
+        it 'rook start on a8, return the correct list of available moves' do
+        
+        end
+
+        it 'the rook start on d4, return the correct list of available moves' do
+
+        end
+      end
+      
+      context 'when there are multiple enemy pieces on the path' do
+        it 'rook start a8, return the correct list of moves including a capture' do
+        end
+
+        it 'rook start d4, return the correct list of moves including both side captures' do
+        end
+      end
+
+      context 'when there is a friendly on one side, and an enemy on the other' do
+        it 'rook start on d4, return the correct list of available moves including a capture' do
+        end
+      end
+
+
+    end
+
+    context 'with a king' do
+      subject(:king_test) { described_class.new(board) }
+
+      context 'on an empty board' do
+      end
+
+      context 'where there is a friendly piece on the path' do
+      end
+
+      context 'where there is an enemy piece on the path' do
+      end
+
+      context 'where there is a friendly piece on one side, and an enemy on the other' do
+      end
+    end
   end
 
 end
