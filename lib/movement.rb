@@ -3,6 +3,11 @@ class Movement
     @board = board
   end
 
+  # TODO:
+  # horizontal and vertical moves almost the same
+  # try to make it one method call moves doing both horizontal/vertical adding
+  # depending of the offset of the current piece
+  #
   def horizontal_move(starting_cell)
     result = []
     col_chrs = ('a'..'h').to_a
