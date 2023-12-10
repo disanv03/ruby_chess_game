@@ -107,12 +107,12 @@ class Movement
   private
   def piece_offset(piece, direction)
     offsets = {
-      'r' => { 'h' => 7, 'v' => 7, 'd' => nil, 'c' => nil },
-      'q' => { 'h' => 7, 'v' => 7, 'd' => 7, 'c' => nil },
-      'p' => { 'h' => nil, 'v' => 1, 'd' => 1, 'c' => nil },
-      'b' => { 'h' => nil, 'v' => nil, 'd' => 7, 'c' => nil },
-      'k' => { 'h' => 1, 'v' => 1, 'd' => 1, 'c' => nil },
-      'n' => { 'h' => nil, 'v' => nil, 'd' => nil, 'c' => [2, 1] }
+      'r' => { 'h' => 7, 'v' => 7, 'd' => 0, 'c' => 0 },
+      'q' => { 'h' => 7, 'v' => 7, 'd' => 7, 'c' => 0 },
+      'p' => { 'h' => 0, 'v' => 1, 'd' => 1, 'c' => 0 },
+      'b' => { 'h' => 0, 'v' => 0, 'd' => 7, 'c' => 0 },
+      'k' => { 'h' => 1, 'v' => 1, 'd' => 1, 'c' => 0 },
+      'n' => { 'h' => 0, 'v' => 0, 'd' => 0, 'c' => [2, 1] }
     }
     offsets[piece.downcase][direction]
   end
