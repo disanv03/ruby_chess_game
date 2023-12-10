@@ -200,9 +200,20 @@ describe Movement do
     end
 
     context 'with a king' do
-      subject(:king_test) { described_class.new(board) }
+      subject(:king_test) { described_class.new(board) }
 
       context 'on an empty board' do
+        it 'king start on a8, return the correct list of available moves' do
+          board.make_board('k7/8/8/8/8/8/8/8 b -- 1 2')
+          cell = board.cell('a8')
+          expect(king_test.vertical_move(cell)).to eq(%w[a7])
+        end
+
+        it 'king start on d4, return the correct list of available moves' do
+          board.make_board('8/8/8/8/3k4/8/8/8 b -- 1 2')
+          cell = board.cell('d4')
+          expect(king_test.vertical_move(cell)).to eq(%w[d3 d5])
+        end
       end
 
       context 'where there is a friendly piece on the path' do
@@ -214,6 +225,23 @@ describe Movement do
       context 'where there is a friendly piece on one side, and an enemy on the other' do
       end
     end
+  end
+
+  context '#diagonal move' do
+    let(:board) { Board.new }
+
+    context 'with a bishop' do
+      subject(:bishop_test) { described_class.new(board) }
+
+      context 'on an empty board' do
+          it 'bishop start on a8, return the correct list of available moves' do
+             board.make_board('b7/8/8/8/8/8/8/8 b -- 1 2')
+             cell = board.cell('a8')
+             expect(bishop_test.diagonal_move(cell)).to eq(%w[b7 c6 d5 e4 f3 g2 h1])
+          end
+      end
+    end
+
   end
 
 end

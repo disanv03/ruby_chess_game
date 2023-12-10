@@ -69,6 +69,66 @@ class Movement
     result.sort
   end
 
+  def diagonal_move(starting_cell)
+    result = []
+    col_chrs = ('a'..'h').to_a
+    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1].to_i
+    file_index = col_chrs.index(file)
+    rank_number = 8 - rank
+    offset = piece_offset(piece, 'd') 
+
+    # playing with diagonal with mixing rank and file equaly
+    # - direction for rank (y) is up & for x (file) is left
+    # meaning going diagonaly from d4 to up left would do:
+    #
+    # UP-LEFT:
+    # -1 one rank, -1 file, that goes evenly on like that...
+    # UP-RIGHT would be:
+    # -1 one rank, + 1 file
+    #
+    # DOWN-LEFT:
+    # +1 one rank, -1 file
+    # DOWN-RIGHT
+    # +1 one rank, +1 file
+
+    add_moves_in_direction = lambda do |direction, opposite=false|
+      (1..offset).each do |i|
+        dir_up_and_left = -1
+        dir_down_and_right = 1
+        
+        # Find a way to enumerate the four case above
+        # will start with top/left clockwise
+        if !opposite
+          new_rank_index = rank_number + i * direction 
+          new_file_index = file_index + i * direction
+        elsif direction == -1 
+          new_rank_index = rank_number + i * direction 
+          new_file_index = file_index + i * dir_down_and_right
+        else
+          new_rank_index = rank_number + i * direction
+          new_file_index = file_index + i * dir_up_and_left
+        end
+        break unless new_rank_index.between?(0, 7)
+        target_cell = @board.board[new_rank_index][new_file_index]
+        if target_cell.empty?
+          result << target_cell.to_s
+        elsif target_cell.capture?(piece)
+          result << target_cell.to_s
+          break
+        else
+          # case we got a friendly piece
+        break
+          end
+        end
+    end
+    add_moves_in_direction.call(-1)
+    add_moves_in_direction.call(1)
+    add_moves_in_direction.call(-1, true)
+    add_moves_in_direction.call(1, true)
+
+    result.sort
+  end
+
   private
   def piece_offset(piece, direction)
     offsets = {
