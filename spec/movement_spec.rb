@@ -234,12 +234,53 @@ describe Movement do
       subject(:bishop_test) { described_class.new(board) }
 
       context 'on an empty board' do
+          it 'bishop start on c7, return the correct list of moves' do
+            board.make_board('8/2b5/8/8/8/8/8/8 b -- 1 2')
+            cell = board.cell('c7')
+            eligible = %w[a5 b6 d8 b8 d6 e5 f4 g3 h2].sort
+            expect(bishop_test.diagonal_move(cell)).to eq(eligible)
+          end
+
           it 'bishop start on a8, return the correct list of available moves' do
              board.make_board('b7/8/8/8/8/8/8/8 b -- 1 2')
              cell = board.cell('a8')
              expect(bishop_test.diagonal_move(cell)).to eq(%w[b7 c6 d5 e4 f3 g2 h1])
           end
       end
+
+      context 'when there is a friendly piece on the path' do
+        it 'bishop stand on c7, return correct list of moves' do
+          board.make_board('1n6/2b5/8/8/8/8/8/8 b -- 1 2')
+          cell = board.cell('c7')
+          eligible = %w[a5 b6 d8 d6 e5 f4 g3 h2].sort
+          expect(bishop_test.diagonal_move(cell)).to eq(eligible)
+        end
+
+        it'bishop stand on d4, return correct list of moves' do
+          board.make_board('8/8/1p3p2/8/3b4/8/1n7/8 b -- 1 2')
+          cell = board.cell('d4')
+          eligible = %w[c5 e5 c3 e3 f2 g1].sort
+          expect(bishop_test.diagonal_move(cell)).to eq(eligible)
+        end
+      end
+
+      context 'when there are multiple enemy pieces on the path' do
+        it 'bishop stand on c7, returns correct list of moves including capture' do
+          board.make_board('1N6/2b5/8/4P3/5B2/8/8/8 b -- 1 2')
+          cell = board.cell('c7')
+          eligible = %w[a5 b6 b8 d8 d6 e5].sort
+          expect(bishop_test.diagonal_move(cell)).to eq(eligible)
+        end
+
+        it 'bishop stand on d4, returns correct list of moves including capture' do
+          board.make_board('8/8/1P7/8/3b4/8/1n3P2/6N1 b -- 1 2')
+          cell = board.cell('d4')
+          eligible = %w[c5 b6 e3 f2 h8 g7 f6 e5 c3].sort
+          expect(bishop_test.diagonal_move(cell)).to eq(eligible)
+
+        end
+      end
+    
     end
 
   end
