@@ -104,6 +104,10 @@ class Movement
     result.sort
   end
 
+  def knight_moves(starting_cell)
+    return nil unless %w[n N].include?(starting_cell.content)
+  end
+
   private
   def piece_offset(piece, direction)
     offsets = {

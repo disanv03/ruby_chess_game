@@ -285,4 +285,16 @@ describe Movement do
 
   end
 
+  context '#knight_moves' do
+    let(:board) { Board.new }
+    subject(:knight_test) { described_class.new(board) }
+
+    it 'return nil when a given piece is not a knight' do
+      board.make_board('b7/8/8/8/8/8/8/8 b -- 1 2')
+      cell = board.cell('a8')
+      expect(knight_test.knight_moves(cell)).to be_nil
+    end
+
+  end
+
 end
