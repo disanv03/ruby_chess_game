@@ -285,14 +285,28 @@ describe Movement do
 
   end
 
-  context '#knight_moves' do
+  context '#find_knight_moves' do
     let(:board) { Board.new }
     subject(:knight_test) { described_class.new(board) }
 
     it 'return nil when a given piece is not a knight' do
       board.make_board('b7/8/8/8/8/8/8/8 b -- 1 2')
       cell = board.cell('a8')
-      expect(knight_test.knight_moves(cell)).to be_nil
+      expect(knight_test.find_knight_moves(cell)).to be_nil
+    end
+
+    it 'on an empty board starting at d4, returns correct list of availables moves' do
+      board.make_board('8/8/8/8/3n4/8/8/8 b - - 1 2')
+      cell = board.cell('d4')
+      eligible = %w[c6 e6 f5 f3 e2 c2 b3 b5].sort
+      expect(knight_test.find_knight_moves(cell)).to eq(eligible)
+    end
+
+    it 'on an non empty board starting at d4, returns the correct list of available moves including possible captures' do
+      board.make_board('8/8/2b1P3/8/3n4/5p2/2P5/8 b - - 1 2')
+      cell = board.cell('d4')
+      eligible = %w[xe6 f5 e2 xc2 b3 b5].sort
+      expect(knight_test.find_knight_moves(cell)).to eq(eligible)
     end
 
   end

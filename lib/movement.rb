@@ -104,9 +104,32 @@ class Movement
     result.sort
   end
 
-  def knight_moves(starting_cell)
-    return nil unless %w[n N].include?(starting_cell.content)
+  def find_knight_moves(starting_cell)
+    start = @board.std_chess_to_arr(starting_cell.coordinate)
+    piece = starting_cell.content
+    return nil unless piece == 'N' || piece == 'n'
+
+    moves = [
+      [2, 1], [2, -1], [-2, 1], [-2, -1],
+      [1, 2], [1, -2], [-1, 2], [-1, -2]
+    ]
+
+    result = []
+    moves.each do |move|
+      new_pos =  [start[0] + move[0], start[1] + move[1]]
+      next if new_pos.any? { |coord| coord < 0 || coord >= 8 }
+
+      next_ref = @board.arr_to_std_chess(new_pos)
+      step = @board.cell(next_ref)
+
+      if step
+        capture = step.capture?(piece) ? 'x' : ''
+        result << (capture + step.to_s) if step.empty? || step.capture?(piece)
+      end
+    end
+    result.sort
   end
+                                
 
   private
   def piece_offset(piece, direction)
