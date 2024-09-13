@@ -19,6 +19,7 @@ class Cell
   end
 
   def capture?(attacking)
+    return false if @content.nil?
     attacking_color = attacking.ord < 91 ? 'w' : 'b'
     piece_color = @content.ord < 91 ? 'w' : 'b'
     attacking_color != piece_color

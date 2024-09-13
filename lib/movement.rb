@@ -2,7 +2,7 @@ class Movement
   def initialize(board=nil)
     @board = board
   end
-
+  
   # TODO:
   # horizontal and vertical moves almost the same
   # try to make it one method call moves doing both horizontal/vertical adding
@@ -122,14 +122,15 @@ class Movement
       next_ref = @board.arr_to_std_chess(new_pos)
       step = @board.cell(next_ref)
 
-      if step
+      if (step)
         capture = step.capture?(piece) ? 'x' : ''
-        result << (capture + step.to_s) if step.empty? || step.capture?(piece)
+        result << (capture + step.to_s) if step.empty? || step.capture?(piece)
       end
     end
+    sorted_result = result.sort
+    puts "#{sorted_result.join(', ')}"
     result.sort
   end
-                                
 
   private
   def piece_offset(piece, direction)
