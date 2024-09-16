@@ -10,6 +10,8 @@ class Cell
     @content.nil?
   end
 
+  # to_fen: give the content of the cell
+  # '1' for empty cell else piece character
   def to_fen
     @content.nil? ? '1' : @content
   end

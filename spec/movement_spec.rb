@@ -295,6 +295,13 @@ describe Movement do
       expect(knight_test.find_knight_moves(cell)).to be_nil
     end
 
+    it 'on an empty board starting at a8, returns correct list of moves (testing out of bounds)' do
+      board.make_board('n7/8/8/8/8/8/8/8 b - - 1 2')
+      cell = board.cell('a8')
+      eligible = %w[b6 c7].sort
+      expect(knight_test.find_knight_moves(cell)).to eq(eligible)
+    end
+
     it 'on an empty board starting at d4, returns correct list of availables moves' do
       board.make_board('8/8/8/8/3n4/8/8/8 b - - 1 2')
       cell = board.cell('d4')

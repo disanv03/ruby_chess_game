@@ -127,8 +127,6 @@ class Movement
         result << (capture + step.to_s) if step.empty? || step.capture?(piece)
       end
     end
-    sorted_result = result.sort
-    puts "#{sorted_result.join(', ')}"
     result.sort
   end
 
