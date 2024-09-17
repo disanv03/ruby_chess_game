@@ -3,107 +3,32 @@ class Movement
     @board = board
   end
   
-  # TODO:
-  # horizontal and vertical moves almost the same
-  # try to make it one method call moves doing both horizontal/vertical adding
-  # depending of the offset of the current piece
-  #
+  # horizontal_move: finding legal horizontal moves
   def horizontal_move(starting_cell)
-    result = []
-    col_chrs = ('a'..'h').to_a
-    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1]
-    file_index = col_chrs.index(file)
-    offset = piece_offset(piece, 'h') 
-
-    add_moves_in_direction = lambda do |direction|
-        (1..offset).each do |i|
-        new_file_index = file_index + i * direction
-        break unless new_file_index.between?(0, 7)
-
-        target_cell = @board.cell("#{col_chrs[new_file_index]}#{rank}")
-        if target_cell.empty?
-          result << target_cell.to_s
-        elsif target_cell.capture?(piece)
-          result << target_cell.to_s
-          break
-        else
-          # case when we got a friendly piece
-          break
-        end
-      end
-    end
-    
-    add_moves_in_direction.call(-1) #left
-    add_moves_in_direction.call(1) # right
-
-    result.sort
+    directions = [-1, 1]
+    offset = piece_offset(starting_cell.content, 'h')
+    move_in_directions(starting_cell, directions, offset, :horizontal)
   end
 
+  # vertical_move: from a cell, it found the legal vertical move of that piece
   def vertical_move(starting_cell)
-    result = []
-    col_chrs = ('a'..'h').to_a
-    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1].to_i
-    file_index = col_chrs.index(file)
-    rank_number = 8 - rank
-    offset = piece_offset(piece, 'v') 
-
-    add_moves_in_direction = lambda do |direction|
-      (1..offset).each do |i|
-        new_rank_index = rank_number + i * direction
-        break unless new_rank_index.between?(0, 7)
-        target_cell = @board.board[new_rank_index][file_index]
-        if target_cell.empty?
-          result << target_cell.to_s
-        elsif target_cell.capture?(piece)
-          result << target_cell.to_s
-          break
-        else
-          # case we got a friendly piece
-          break
-        end
-    end
-  end
-    add_moves_in_direction.call(-1)
-    add_moves_in_direction.call(1)
-
-    result.sort
+    directions = [-1, 1]
+    offset = piece_offset(starting_cell.content, 'v')
+    move_in_directions(starting_cell, directions, offset, :vertical)
   end
 
+  # diagonal_move: find all legal diagonal moves
   def diagonal_move(starting_cell)
-    result = []
-    col_chrs = ('a'..'h').to_a
-    piece, file, rank =  starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1].to_i
-    file_index = col_chrs.index(file)
-    rank_number = 8 - rank
-    offset = piece_offset(piece, 'd') 
-
-    add_moves_in_direction = lambda do |rank_dir, file_dir|
-      (1..offset).each do |i|
-        new_rank_index = rank_number + i * rank_dir
-        new_file_index = file_index + i * file_dir
-
-        break unless new_rank_index.between?(0, 7) && new_file_index.between?(0,7)
-
-        target_cell = @board.board[new_rank_index][new_file_index]
-        if target_cell.empty?
-          result << target_cell.to_s
-        elsif target_cell.capture?(piece)
-          result << target_cell.to_s
-          break
-        else
-          # case we got a friendly piece
-        break
-          end
-        end
-    end
-    add_moves_in_direction.call(-1, -1) # UP-LEFT
-    add_moves_in_direction.call(-1, 1) # UP-RIGHT
-    add_moves_in_direction.call(1, -1) # DOWN-LEFT
-    add_moves_in_direction.call(1, 1) # DOWN-RIGHT
-
-    result.sort
+    # [-1, -1] UP-LEFT
+    # [-1, 1] UP-RIGHT
+    # [1, -1] DOWN-LEFT
+    # [1, 1] DOWN-RIGHT
+    directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    offset = piece_offset(starting_cell.content, 'd')
+    move_in_directions(starting_cell, directions, offset, :diagonal)
   end
 
+  # find_knight_moves: giving all knight move and capture prefixed by 'x'
   def find_knight_moves(starting_cell)
     start = @board.std_chess_to_arr(starting_cell.coordinate)
     piece = starting_cell.content
@@ -131,14 +56,53 @@ class Movement
   end
 
   private
+  # move_in_directions: depending on the given type direction it find the correct moves
+  def move_in_directions(starting_cell, directions, offset, type)
+    result = []
+    col_chrs = ('a'..'h').to_a
+    piece, file, rank = starting_cell.content, starting_cell.coordinate[0], starting_cell.coordinate[1].to_i
+    file_index = col_chrs.index(file)
+    rank_number = 8 - rank
+
+    directions.each do |direction|
+      (1..offset).each do |i|
+        if type == :horizontal
+          new_file_index = file_index + i * direction
+          break unless new_file_index.between?(0, 7)
+          target_cell = @board.board[rank_number][new_file_index]
+        elsif type == :vertical
+          new_rank_index = rank_number + i * direction
+          break unless new_rank_index.between?(0, 7)
+          target_cell = @board.board[new_rank_index][file_index]
+        elsif type == :diagonal
+          new_rank_index = rank_number + i * direction[0]
+          new_file_index = file_index + i * direction[1]
+          break unless new_rank_index.between?(0, 7) && new_file_index.between?(0, 7)
+          target_cell = @board.board[new_rank_index][new_file_index]
+        end
+
+        if target_cell.empty?
+          result << target_cell.to_s
+        elsif target_cell.capture?(piece)
+          result << target_cell.to_s
+          break
+        else
+          # friendly piece
+          break
+        end
+      end
+    end
+    result.sort
+  end
+
+  # piece_offset: returns the right offset number for a given piece
   def piece_offset(piece, direction)
     offsets = {
       'r' => { 'h' => 7, 'v' => 7, 'd' => 0 },
       'q' => { 'h' => 7, 'v' => 7, 'd' => 7 },
       'p' => { 'h' => 0, 'v' => 1, 'd' => 1 },
       'b' => { 'h' => 0, 'v' => 0, 'd' => 7 },
-      'k' => { 'h' => 1, 'v' => 1, 'd' => 1 },
-      'n' => { 'h' => 0, 'v' => 0, 'd' => 0 }
+      'k' => { 'h' => 1, 'v' => 1, 'd' => 1 }
     }
     offsets[piece.downcase][direction]
   end
