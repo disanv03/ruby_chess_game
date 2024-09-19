@@ -24,7 +24,7 @@ class Cell
 
 
   # capture?: check if capture is allowed
-  # the method is better read from right to left given:
+  # the method is better read from right to left giving:
   # does the argument can capture the calling cell content.
   # White use uppercase letter < 91 as "Z" is 90
   # Black use lowercase starting from 97 = "a"
