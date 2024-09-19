@@ -318,4 +318,22 @@ describe Movement do
 
   end
 
+  context '#find_pawn_moves' do
+    let(:board) { Board.new }
+    subject(:pawn_test) { described_class.new(board) }
+
+    context 'with a black pawn' do
+      context 'on an empty board' do
+        it 'starting at c7, returns correct list of moves, including double forward move' do
+          board.make_board('8/2p5/8/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('c7')
+          eligible = %w[c6 c5].sort
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+
+      end
+    end
+  end
+
+
 end
