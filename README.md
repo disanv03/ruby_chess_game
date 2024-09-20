@@ -1,24 +1,20 @@
-# Terminal based chess game written in Ruby
+# Simple Chess Game
 
-Play chess in your terminal with this minimalist turn-based game.
+Enjoy a minimalist chess game right in your terminal. This project is currenlty under development. Comments and suggestions are welcome.
 
-## Usage
+### Usage
 
+comming soon
 
-## Installation
+### Installation
 
+comming soon
 
-## Contribute
-
-Feel free to contribute to this project. 
-
-
-Contact me at: gnuno_03 [at] hotmail [dot] com
-
-## Credits
+### Credits
 
 Special credits to [crespire](https://github.com/crespire/ruby_chess) and his chess game implementation for being the roadmap of this project.
 
+### Contact
 
-
-
+Feel to send me an email if you have any comments. 
+Contact me at: gnuno_03 [at] hotmail [dot] com
