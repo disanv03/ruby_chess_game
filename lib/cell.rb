@@ -22,7 +22,6 @@ class Cell
     @content.nil? ? '1' : @content
   end
 
-
   # capture?: check if capture is allowed
   # the method is better read from right to left giving:
   # does the argument can capture the calling cell content.

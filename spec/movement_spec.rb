@@ -331,8 +331,33 @@ describe Movement do
           expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
         end
 
+        it 'starting at c6, returns correct list of available moves' do
+          board.make_board('8/8/2p5/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('c6')
+          eligible = ["c5"]
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
       end
     end
+
+    context 'with a white pawn' do
+      context 'on an empty board' do
+        it 'starting at c2, returns correct list of moves, including double forward' do
+          board.make_board('8/8/8/8/8/8/2P5/8 b - - 1 2')
+          cell = board.cell('c2')
+          eligible = %w[c3 c4]
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+
+        it 'from c3, returns correct moves' do
+          board.make_board('8/8/8/8/8/2P5/8/8 b - - 1 2')
+          cell = board.cell('c3')
+          eligible = ["c4"]
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+      end
+    end
+
   end
 
 

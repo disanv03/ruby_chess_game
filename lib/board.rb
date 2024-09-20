@@ -64,9 +64,14 @@ class Board
       [y, x]
   end
 
-  # cell: finding the adequate cell on the board from a std chess notation
+  # cell: finding the adequate Cell on the board from a std chess notation
   def cell(coordinate)
     arr = std_chess_to_arr(coordinate)
+    @board[arr[0]][arr[1]]
+  end
+
+  # get_square: getting from array notation the corresponding Cell
+  def get_square(arr)
     @board[arr[0]][arr[1]]
   end
 

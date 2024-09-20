@@ -60,7 +60,7 @@ class Movement
   # to the compute_pawn_moves function
   def find_pawn_moves(starting_cell)
     return nil unless %w[p P].include?(starting_cell.content)
-    direction_from_color = (starting_cell == 'P' ? -1 : 1)
+    direction_from_color = (starting_cell.content == 'P' ? -1 : 1)
     home_rank = starting_cell.content == 'P' ? 6 : 1
     compute_pawn_moves(starting_cell, direction_from_color, home_rank)
   end
@@ -116,8 +116,8 @@ class Movement
     next_refs = double_fwd ? [[start[0] + direction, start[1]], [start[0] + (direction * 2), start[1]]] : [[start[0] + direction, start[1]]]
     next_refs.each do |arr_moves|
       next if arr_moves.any?(&:negative?) || arr_moves.any? { |x| x > 7 }
-      next_ref = @board.board[arr_moves[0], arr_moves[1]]
-      result << next_ref.to_s if step.empty?
+      next_ref = @board.get_square(arr_moves)
+      result << next_ref.to_s if next_ref.empty?
       break unless next_ref.empty?
     end
 
@@ -125,7 +125,7 @@ class Movement
     next_refs = [[start[0] + direction, start[1] - 1], [start[0] + direction, start[1] + 1]]
     next_refs.each do |arr_moves|
       next if arr_moves.any?(&:negative?) || arr_moves.any? { |x| x > 7 }
-      next_ref = @board.board[arr_moves[0], arr_moves[1]]
+      next_ref = @board.get_square(arr_moves)
       capture = next_ref.capture?(starting_cell.content) ? 'x' : ''
       result << (capture + next_ref.to_s) if !next_ref.empty? && next_ref.capture?(starting_cell.content)
     end
