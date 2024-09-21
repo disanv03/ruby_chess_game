@@ -338,7 +338,49 @@ describe Movement do
           expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
         end
       end
-    end
+
+      context 'on a board with a fellow(same content)' do
+        it 'starting at c7, returns correct moves, when path forward is blocked' do
+          board.make_board('8/2p5/2p5/8/8/8/8/8 b - - 1 2')
+          cell = board.cell('c7')
+          eligible = []
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+
+        it 'from c7, returns correct moves, when path blocked for the "double forward" move' do
+          board.make_board('8/2p5/8/2p5/8/8/8/8 b - - 1 2')
+          cell = board.cell('c7')
+          eligible = ["c6"]
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end 
+      end
+
+      context 'on a board with other pieces' do
+        context 'from c7' do
+          it 'give correct list of moves, when next forward move it occupied by a friendly piece' do
+            board.make_board('8/2p5/2n5/8/8/8/8/8 b - - 1 2')
+            cell = board.cell('c7')
+            eligible = []
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+
+          it 'correct list of moves, when double forward move it occupied by a friendly piece' do
+            board.make_board('8/2p5/8/2n5/8/8/8/8 b - - 1 2')
+            cell = board.cell('c7')
+            eligible = ["c6"]
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+        end
+
+        context 'from c5' do
+          it 'give correct possibles move' do
+            board.make_board('8/8/8/2p5/8/8/8/8 b - - 1 2')
+            cell = board.cell('c5')
+            eligible = ["c4"]
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+        end
+      end
 
     context 'with a white pawn' do
       context 'on an empty board' do
@@ -356,9 +398,53 @@ describe Movement do
           expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
         end
       end
+
+      context 'on a board with a fellow' do
+        it 'from c2, returns correct list of moves, with fully blocked path' do
+          board.make_board('8/8/8/8/8/2P5/2P5/8 b - - 1 2')
+          cell = board.cell('c2')
+          eligible = []
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+
+        it 'from c2, retruns correct list of moves, path blocked for "double forward" only' do
+          board.make_board('8/8/8/8/2P5/8/2P5/8 b - - 1 2')
+          cell = board.cell('c2')
+          eligible = ["c3"]
+          expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+        end
+      end
     end
 
+      context 'on a board with friendly pieces' do
+        context 'from c2' do
+          it 'give correct list of moves, when next forward move it occupied by a friendly piece' do
+            board.make_board('8/8/8/8/8/2N5/2P5/8 b - - 1 2')
+            cell = board.cell('c2')
+            eligible = []
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+
+          it 'from c2, retruns correct list of moves, path blocked for "double forward" only' do
+            board.make_board('8/8/8/8/2N5/8/2P5/8 b - - 1 2')
+            cell = board.cell('c2')
+            eligible = ["c3"]
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+        end
+
+        context 'from c4' do
+          it 'give correct list of moves' do
+            board.make_board('8/8/8/8/2P5/8/8/8 b - - 1 2')
+            cell = board.cell('c4')
+            eligible = ["c5"]
+            expect(pawn_test.find_pawn_moves(cell)).to eq(eligible)
+          end
+        end
+      end
+    end
+    
   end
 
-
 end
+
