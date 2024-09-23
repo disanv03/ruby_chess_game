@@ -94,7 +94,7 @@ class Movement
         if target_cell.empty?
           result << target_cell.to_s
         elsif target_cell.capture?(piece)
-          result << target_cell.to_s
+          result << ('x'+target_cell.to_s)
           break
         else
           # friendly piece
@@ -129,6 +129,9 @@ class Movement
       capture = next_ref.capture?(starting_cell.content) ? 'x' : ''
       result << (capture + next_ref.to_s) if !next_ref.empty? && next_ref.capture?(starting_cell.content)
     end
+
+    # en passant capture available ?
+    # comming soon...
 
     result.sort
   end
