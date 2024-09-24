@@ -28,6 +28,27 @@ class Movement
     move_in_directions(starting_cell, directions, offset, :diagonal)
   end
 
+  # find_king_moves: give all legals king move
+  # Squares threatened by opponent's pieces need to be avoided.
+  # 1- Identify King potential possible moves
+  # 2- Identify opponent's threats
+  # 3- Filter King's moves
+  def find_king_moves(starting_cell)
+    piece = starting_cell.content
+    return nil unless piece == 'K' || piece == 'k'
+
+    vcal = vertical_move(starting_cell)
+    htal = horizontal_move(starting_cell)
+    dnal = diagonal_move(starting_cell)
+
+    # 2- Oponnent's threats
+    # PROTOTYPE: threats_map
+    opp_color = starting_cell.opponent_color
+    opp_threats = threats_map(@board, opp_color)
+    # 1- King potential possible moves and 2- Filter
+    ((vcal + htal + dnal).uniq - opp_threats).sort
+  end
+
   # find_knight_moves: giving all knight move and capture prefixed by 'x'
   def find_knight_moves(starting_cell)
     start = @board.std_chess_to_arr(starting_cell.coordinate)
@@ -134,6 +155,40 @@ class Movement
     # comming soon...
 
     result.sort
+  end
+
+  # threats_map: looping the board and identify all opponent's threats
+  # PROTOTYPE
+  def threats_map(board, opp_color)
+    threats = []
+    board.each_with_index do |x, y|
+      x.each_with_index do |cell, x|
+        next if cell.empty? || cell.color != opp_color
+        piece_threats = find_moves(starting_cell)
+        threats.concat(piece_threats)
+      end
+    end
+    threats.uniq
+  end
+
+  # find_moves: orienting toward the correct function moves
+  def find_moves(starting_cell)
+    return nil if starting_cell.empty?
+
+    case starting_cell.content
+    when 'p', 'P'
+      find_pawn_moves(starting_cell)
+    when 'n', 'N'
+      find_knight_moves(starting_cell)
+    when 'k', 'K'
+      find_king_moves(starting_cell)
+    when 'b', 'B'
+      find_bishop_moves(starting_cell)
+    when 'r', 'R'
+      find_rook_moves(starting_cell)
+    else
+      find_queen_moves(starting_cell)
+    end
   end
 
 
