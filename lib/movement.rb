@@ -86,6 +86,39 @@ class Movement
     compute_pawn_moves(starting_cell, direction_from_color, home_rank)
   end
 
+  # find_queen_moves: combine all directions do get the complete
+  # available list of Queen moves.
+  def find_queen_moves(starting_cell)
+    piece = starting_cell.content
+    return nil unless piece == 'Q' || piece == 'q'
+
+    vcal = vertical_move(starting_cell)
+    htal = horizontal_move(starting_cell)
+    dnal = diagonal_move(starting_cell)
+
+    (vcal + htal + dnal).sort
+  end
+
+  # find_moves: orienting toward the correct function moves
+  def find_moves(starting_cell)
+    return nil if starting_cell.empty?
+
+    case starting_cell.content
+    when 'p', 'P'
+      find_pawn_moves(starting_cell)
+    when 'n', 'N'
+      find_knight_moves(starting_cell)
+    when 'k', 'K'
+      find_king_moves(starting_cell)
+    when 'b', 'B'
+      find_bishop_moves(starting_cell)
+    when 'r', 'R'
+      find_rook_moves(starting_cell)
+    else
+      find_queen_moves(starting_cell)
+    end
+  end
+
   private
   # move_in_directions: depending on the given type direction it find the correct moves
   def move_in_directions(starting_cell, directions, offset, type)
@@ -171,27 +204,7 @@ class Movement
     threats.uniq
   end
 
-  # find_moves: orienting toward the correct function moves
-  def find_moves(starting_cell)
-    return nil if starting_cell.empty?
-
-    case starting_cell.content
-    when 'p', 'P'
-      find_pawn_moves(starting_cell)
-    when 'n', 'N'
-      find_knight_moves(starting_cell)
-    when 'k', 'K'
-      find_king_moves(starting_cell)
-    when 'b', 'B'
-      find_bishop_moves(starting_cell)
-    when 'r', 'R'
-      find_rook_moves(starting_cell)
-    else
-      find_queen_moves(starting_cell)
-    end
-  end
-
-
+  
   # piece_offset: returns the right offset number for a given piece
   def piece_offset(piece, direction)
     offsets = {

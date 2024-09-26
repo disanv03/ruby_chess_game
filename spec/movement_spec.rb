@@ -304,15 +304,30 @@ describe Movement do
   context '#find_king_moves' do
     let(:board) { Board.new }
     subject(:king_test) { described_class.new(board) }
-      context 'on a board with an enemy rook' do
-        it 'from c4, prevents king crossing vertical line of opponent f2 rook' do
-          # king on e6, Rook on f2
+      context 'on a board with an enemy pieces' do
+        it 'king on e6, prevents it from crossing vertical line of the f2 rook' do
+          board.make_board('8/8/4k3/8/8/8/5R2/8 b - - 1 2')
+          cell = board.cell('e6')
+          eligible = %w[e7 d7 d6 d5 e5].sort
+          expect(king_test.find_king_moves(cell)).to eq(eligible)
         end
-        it 'from c4, prevents king crossing the horizontal line of opponent g5 rook' do
-          # king on e6, Rook on g5
+        it 'king on e6, prevents it from crossing the horizontal line of the g5 rook' do
+          board.make_board('8/8/4k3/6R1/8/8/8/8 b - - 1 2')
+          cell = board.cell('e6')
+          eligible = %w[d6 f6 d7 e7 f7].sort
+          expect(king_test.find_king_moves(cell)).to eq(eligible)
         end
-        it 'from c4, prevents king of crossing the diagonal line of f3 bishop' do
-          # king on e6, Bishop on f3
+        it 'king on e6, prevents it from crossing the diagonal line of the f3 bishop' do
+          board.make_board('8/8/4k3/8/8/5B2/8/8 b - - 1 2')
+          cell = board.cell('e6')
+          eligible = %w[d6 d7 e7 f7 f6 f5 e5].sort
+          expect(king_test.find_king_moves(cell)).to eq(eligible)
+        end
+        it 'king on e6, prevented to crossing diagonal and horizontal line of' do
+          board.make_board('8/8/4k3/8/5R2/5B2/8/8 b - - 1 2')
+          cell = board.cell('e6')
+          eligible = %w[d7 e7 d6 e5].sort
+          expect(king_test.find_king_moves(cell)).to eq(eligible)
         end
       end
   end
@@ -348,6 +363,53 @@ describe Movement do
       expect(knight_test.find_knight_moves(cell)).to eq(eligible)
     end
 
+  end
+
+  context '#find_moves' do
+    let(:board) { Board.new }
+    subject(:moves_test) { described_class.new(board) }
+
+    context 'with a Queen as input' do
+      context 'on an empty board' do
+        it 'from d4, returns correct list of moves' do
+          board.make_board('8/8/8/8/3q4/8/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[d8 d7 d6 d5 d3 d2 d1 a4 b4 c4 e4 f4 g4 h4 e5 f6 g7 h8 c3 b2 a1 c5 b6 a7 e3 f2 g1].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+    end
+    
+    context 'with a Knight as input' do
+      context 'on an empty board' do
+        it 'from d4, returns correct list of moves' do
+          board.make_board('8/8/8/8/3n4/8/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[b5 c6 e6 f5 f3 e2 c2 b3].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+    end
+
+    context 'with a King as input' do
+    end
+
+    context 'with a Pawn as input' do
+      context 'on an empty board' do
+        it 'from e2, returns correct list of moves' do
+          board.make_board('8/8/8/8/8/8/4P3/8 w - - 1 2')
+          cell = board.cell('e2')
+          eligible = %w[e3 e4]
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+    end
+
+    context 'with a Rook as input' do
+    end
+
+    context 'with a Bishop as input' do
+    end
   end
 
   context '#find_pawn_moves' do
