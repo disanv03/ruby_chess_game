@@ -411,17 +411,47 @@ describe Movement do
     end
 
     context 'with a King as input' do
-    end
-
-    context 'with a Pawn as input' do
-      context 'on an empty board' do
-        it 'from e2, returns correct list of moves' do
-          board.make_board('8/8/8/8/8/8/4P3/8 w - - 1 2')
-          cell = board.cell('e2')
-          eligible = %w[e3 e4]
+      context 'friendly piece on one side, enemy on the other' do
+        it 'from d4, returns correct list of available moves including capture' do
+          board.make_board('8/8/8/8/2pkP3/2N6/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[c5 d5 e5 xe4 xc3 d3 e3].sort
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end
+    end
+
+    context 'with a Pawn as input' do
+      context 'with a black Pawn' do
+        context 'on an empty board' do
+          it 'from c7, returns correct list of moves' do
+          end
+        end
+        context 'on a board with other pieces' do
+          it 'from c7, returns correct list of moves' do
+            board.make_board('8/2p5/3P4/2p5/8/8/8/8 b - - 1 2')
+            cell = board.cell('c7')
+            eligible = %w[c6 xd6].sort
+            expect(moves_test.find_moves(cell)).to eq(eligible)
+          end
+        end
+      end
+
+      context 'with a white Pawn' do
+        context 'on an empty board' do
+          it 'from e2, returns correct list of moves' do
+            board.make_board('8/8/8/8/8/8/4P3/8 w - - 1 2')
+            cell = board.cell('e2')
+            eligible = %w[e3 e4]
+            expect(moves_test.find_moves(cell)).to eq(eligible)
+          end
+        end
+        context 'on a board with another pieces' do
+          it 'from c2, returns correst list of moves' do
+          end
+        end
+      end
+
     end
 
     context 'with a Rook as input' do

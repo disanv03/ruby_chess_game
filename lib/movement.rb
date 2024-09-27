@@ -111,9 +111,9 @@ class Movement
     when 'k', 'K'
       find_king_moves(starting_cell)
     when 'b', 'B'
-      find_bishop_moves(starting_cell)
+      diagonal_move(starting_cell)
     when 'r', 'R'
-      find_rook_moves(starting_cell)
+      horizontal_move(starting_cell)
     else
       find_queen_moves(starting_cell)
     end
@@ -192,12 +192,12 @@ class Movement
 
   # threats_map: looping the board and identify all opponent's threats
   # PROTOTYPE
-  def threats_map(board, opp_color)
+  def threats_map(board_instance, opp_color)
     threats = []
-    board.each_with_index do |x, y|
+    board_instance.board.each_with_index do |x, y|
       x.each_with_index do |cell, x|
         next if cell.empty? || cell.color != opp_color
-        piece_threats = find_moves(starting_cell)
+        piece_threats = find_moves(cell)
         threats.concat(piece_threats)
       end
     end

@@ -34,12 +34,12 @@ class Cell
     attacking_color != target_color
   end
 
-  def color(piece)
-    piece.ord < 91 ? 'w' : 'b'
+  def color
+    @content.ord < 91 ? 'w' : 'b'
   end
 
-  def opponent_color(color)
-    color == 'w' ? 'b' : 'w'
+  def opponent_color
+    @content.ord < 91 ? 'b' : 'w'
   end
 end
 
