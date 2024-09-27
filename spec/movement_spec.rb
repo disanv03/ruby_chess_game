@@ -378,6 +378,15 @@ describe Movement do
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end
+
+      context 'on a board with mixed pieces in its path' do
+        it 'from d4, returns correct list of moves' do
+          board.make_board('8/3p4/8/8/3qn3/8/3P1P2/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[a4 b4 c4 d5 d6 d3 xd2 a1 b2 c3 e5 f6 g7 h8 a7 b6 c5 e3 xf2].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
     end
     
     context 'with a Knight as input' do
@@ -389,6 +398,16 @@ describe Movement do
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end
+
+      context 'on a board with mixed pieces in its path' do
+        it 'from d4, returns correct list of moves' do
+          board.make_board('8/8/2p1p3/8/3n4/8/2P5/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[f5 f3 e2 xc2 b3 b5].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+
     end
 
     context 'with a King as input' do
