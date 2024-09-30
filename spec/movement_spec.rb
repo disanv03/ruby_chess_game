@@ -323,7 +323,7 @@ describe Movement do
           eligible = %w[d6 d7 e7 f7 f6 f5 e5].sort
           expect(king_test.find_king_moves(cell)).to eq(eligible)
         end
-        it 'king on e6, prevented to crossing diagonal and horizontal line of' do
+        it 'king on e6, prevents from crossing diagonal and vertical line of f3 Bishop and f4 rook' do
           board.make_board('8/8/4k3/8/5R2/5B2/8/8 b - - 1 2')
           cell = board.cell('e6')
           eligible = %w[d7 e7 d6 e5].sort
@@ -415,7 +415,7 @@ describe Movement do
         it 'from d4, returns correct list of available moves including capture' do
           board.make_board('8/8/8/8/2pkP3/2N6/8/8 b - - 1 2')
           cell = board.cell('d4')
-          eligible = %w[c5 d5 e5 xe4 xc3 d3 e3].sort
+          eligible = %w[c5 d3 e3 e5 xc3].sort
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end

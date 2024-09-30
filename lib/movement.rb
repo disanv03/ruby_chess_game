@@ -113,7 +113,9 @@ class Movement
     when 'b', 'B'
       diagonal_move(starting_cell)
     when 'r', 'R'
-      horizontal_move(starting_cell)
+      htal = horizontal_move(starting_cell)
+      vcal = vertical_move(starting_cell)
+      (htal + vcal).sort
     else
       find_queen_moves(starting_cell)
     end
