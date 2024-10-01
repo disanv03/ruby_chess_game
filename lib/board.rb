@@ -11,6 +11,14 @@ class Board
     @half = nil
     @full = nil
   end
+  
+  # make_move: effeciently change the content of origin&destination cells
+  def make_move(origin, destination)
+    from = cell(origin)
+    to = cell(destination)
+    to.content = from.content.dup
+    from.content = nil
+  end
 
   # make_board: parse a fen to a Board, setting up each cell using chess notation
   def make_board(fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')

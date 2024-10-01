@@ -2,7 +2,7 @@ class Movement
   def initialize(board=nil)
     @board = board
   end
-  
+   
   # horizontal_move: finding legal horizontal moves
   def horizontal_move(starting_cell)
     directions = [-1, 1]
@@ -19,34 +19,33 @@ class Movement
 
   # diagonal_move: find all legal diagonal moves
   def diagonal_move(starting_cell)
-    # [-1, -1] UP-LEFT
-    # [-1, 1] UP-RIGHT
-    # [1, -1] DOWN-LEFT
-    # [1, 1] DOWN-RIGHT
-    directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]
+    directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]] # UL, UR, DL, DR
     offset = piece_offset(starting_cell.content, 'd')
     move_in_directions(starting_cell, directions, offset, :diagonal)
   end
 
   # find_king_moves: give all legals king move
-  # Squares threatened by opponent's pieces need to be avoided.
-  # 1- Identify King potential possible moves
-  # 2- Identify opponent's threats
-  # 3- Filter King's moves
+  # Protected opponent pieces need to become capture impossible
   def find_king_moves(starting_cell)
     piece = starting_cell.content
     return nil unless piece == 'K' || piece == 'k'
 
+    # 1- King potential moves
     vcal = vertical_move(starting_cell)
     htal = horizontal_move(starting_cell)
     dnal = diagonal_move(starting_cell)
 
     # 2- Oponnent's threats
-    # PROTOTYPE: threats_map
     opp_color = starting_cell.opponent_color
     opp_threats = threats_map(@board, opp_color)
-    # 1- King potential possible moves and 2- Filter
+    # 3- Filter
     ((vcal + htal + dnal).uniq - opp_threats).sort
+
+    # 4- Second Filter for capture that would put the king in check
+    # For every capture, make this move on a copy of the @board
+    # check if this move is not putting the king in check
+    # if check is true then discard this capture from legal move.
+    # Leading toward implementation of make_move and is_in_check?
   end
 
   # find_knight_moves: giving all knight move and capture prefixed by 'x'
@@ -76,9 +75,8 @@ class Movement
     result.sort
   end
 
-  # find_pawn_moves: moves are different depending of the pawn colors.
-  # This function pass the correct direction and the starting rank (home_rank)
-  # to the compute_pawn_moves function
+  # find_pawn_moves: direction is different depending on colors.
+  # Also give the correct starting point.
   def find_pawn_moves(starting_cell)
     return nil unless %w[p P].include?(starting_cell.content)
     direction_from_color = (starting_cell.content == 'P' ? -1 : 1)
@@ -193,7 +191,6 @@ class Movement
   end
 
   # threats_map: looping the board and identify all opponent's threats
-  # PROTOTYPE
   def threats_map(board_instance, opp_color)
     threats = []
     board_instance.board.each_with_index do |x, y|

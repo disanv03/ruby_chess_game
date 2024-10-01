@@ -154,6 +154,15 @@ describe Board do
         expect(test_cell).to have_attributes(coordinate: 'a8')
       end
     end
+
+    context '#make_move' do
+      subject(:move_update) { described_class.new }
+      it 'make a move from an origin to a destination cell' do
+        move_update.make_board
+        to = move_update.cell('a6')
+        expect { move_update.make_move('a7', 'a6') }.to change {to.content}.from(nil).to('p')
+      end
+    end
   end
 end
 

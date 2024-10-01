@@ -1,5 +1,6 @@
 class Cell
-  attr_reader :content, :coordinate
+  attr_accessor :content
+  attr_reader :coordinate
 
   def initialize(piece=nil, coordinate=nil)
     @content = piece
@@ -34,10 +35,12 @@ class Cell
     attacking_color != target_color
   end
 
+  # color: give the corresponding char color of the calling cell
   def color
     @content.ord < 91 ? 'w' : 'b'
   end
 
+  # opponent_color: give the opponent_color of the calling cell
   def opponent_color
     @content.ord < 91 ? 'b' : 'w'
   end
