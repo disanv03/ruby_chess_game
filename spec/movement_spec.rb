@@ -332,6 +332,14 @@ describe Movement do
       end
   end
 
+  context '#is_in_check' do
+    let(:board) { Board.new }
+    subject(:is_in_check_test) { described_class.new(board) }
+
+    it '' do
+    end
+  end
+
   context '#find_knight_moves' do
     let(:board) { Board.new }
     subject(:knight_test) { described_class.new(board) }
@@ -416,6 +424,24 @@ describe Movement do
           board.make_board('8/8/8/8/2pkP3/2N6/8/8 b - - 1 2')
           cell = board.cell('d4')
           eligible = %w[c5 d3 e3 e5 xc3].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+
+      context 'when there are a limited set of moves' do
+        it 'correctly shows moves that prevent self-checking' do
+          board.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
+          cell = board.cell('c5')
+          eligible = %w[b6 c6 b5].sort
+          expect(moves_test.find_moves(cell)).to eq(eligible)
+        end
+      end
+
+      context 'surrounding by enemy piece' do
+        it 'correctly avoid self-checking moves' do
+          board.make_board('8/8/8/8/2pkP3/3B4/8/8 b - - 1 2')
+          cell = board.cell('d4')
+          eligible = %w[c3 xd3 e3 c5 e5].sort
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end

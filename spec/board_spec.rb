@@ -162,6 +162,21 @@ describe Board do
         to = move_update.cell('a6')
         expect { move_update.make_move('a7', 'a6') }.to change {to.content}.from(nil).to('p')
       end
+
+      context 'with a King' do
+        it 'make a move on an illegal square' do
+          move_update.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
+          to = move_update.cell('b4')
+          expect { move_update.make_move('c5', 'b4') }.to change {to.content}.from(nil).to('k')
+        end
+
+        it 'make an illegal capture' do
+          move_update.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
+          to = move_update.cell('d4')
+          expect { move_update.make_move('c5', 'd4') }.to change {to.content}.from('R').to('k')
+        end
+      end
+
     end
   end
 end

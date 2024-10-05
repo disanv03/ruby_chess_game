@@ -39,13 +39,19 @@ class Movement
     opp_color = starting_cell.opponent_color
     opp_threats = threats_map(@board, opp_color)
     # 3- Filter
-    ((vcal + htal + dnal).uniq - opp_threats).sort
+    potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
 
     # 4- Second Filter for capture that would put the king in check
-    # For every capture, make this move on a copy of the @board
-    # check if this move is not putting the king in check
-    # if check is true then discard this capture from legal move.
-    # Leading toward implementation of make_move and is_in_check?
+    # On an transition_board, make the king  move on each potential_moves 
+    # then apply is_in_check? to discard illegal moves
+    # Would need to strip x from move
+    legal_moves = potential_moves.select do |move|
+      transition_board = @board.dup
+      transition_board.make_move(starting_cell, move)
+      !is_in_check?(transition_board, move)
+    end
+
+    legal_moves.sort
   end
 
   # find_knight_moves: giving all knight move and capture prefixed by 'x'
@@ -201,6 +207,16 @@ class Movement
       end
     end
     threats.uniq
+  end
+
+  def is_in_check?(board, king_cell)
+    king = king_cell.content
+    return nil unless king == 'K' || king == 'k'
+
+    king_color = king.color
+    opp_color = king_color.opponent_color
+    opp_threats = threats_map(board, opp_color)
+    opp_threats.include?(king_cell.coordinate)
   end
 
   
