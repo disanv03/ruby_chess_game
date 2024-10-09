@@ -39,15 +39,16 @@ class Movement
     opp_color = starting_cell.opponent_color
     opp_threats = threats_map(@board, opp_color)
     # 3- Filter
+    # here forward pawn move count as a threat move
     potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
+    stripped_moves = potential_moves.map { |move| move.delete('x') }
 
     # 4- Second Filter for capture that would put the king in check
     # On an transition_board, make the king  move on each potential_moves 
     # then apply is_in_check? to discard illegal moves
-    # Would need to strip x from move
-    legal_moves = potential_moves.select do |move|
+    legal_moves = stripped_moves.select do |move|
       transition_board = @board.dup
-      transition_board.make_move(starting_cell, move)
+      transition_board.make_move(starting_cell.coordinate, move)
       !is_in_check?(transition_board, move)
     end
 
@@ -210,13 +211,12 @@ class Movement
   end
 
   def is_in_check?(board, king_cell)
-    king = king_cell.content
-    return nil unless king == 'K' || king == 'k'
+    king = board.cell(king_cell)
+    return nil unless king.content == 'K' || king.content == 'k'
 
-    king_color = king.color
-    opp_color = king_color.opponent_color
+    opp_color = king.opponent_color
     opp_threats = threats_map(board, opp_color)
-    opp_threats.include?(king_cell.coordinate)
+    opp_threats.include?(king.coordinate)
   end
 
   

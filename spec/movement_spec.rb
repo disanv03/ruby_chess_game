@@ -423,7 +423,7 @@ describe Movement do
         it 'from d4, returns correct list of available moves including capture' do
           board.make_board('8/8/8/8/2pkP3/2N6/8/8 b - - 1 2')
           cell = board.cell('d4')
-          eligible = %w[c5 d3 e3 e5 xc3].sort
+          eligible = %w[c5 d3 e3 e5 c3].sort
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end
@@ -441,7 +441,7 @@ describe Movement do
         it 'correctly avoid self-checking moves' do
           board.make_board('8/8/8/8/2pkP3/3B4/8/8 b - - 1 2')
           cell = board.cell('d4')
-          eligible = %w[c3 xd3 e3 c5 e5].sort
+          eligible = %w[c3 d3 e3 c5 e5].sort
           expect(moves_test.find_moves(cell)).to eq(eligible)
         end
       end
