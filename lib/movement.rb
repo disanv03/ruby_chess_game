@@ -34,24 +34,39 @@ class Movement
     vcal = vertical_move(starting_cell)
     htal = horizontal_move(starting_cell)
     dnal = diagonal_move(starting_cell)
+    
+    puts "Debug: vertical moves: #{vcal}"
+    puts "Debug: horizontal moves: #{htal}"
+    puts "Debug: diagonal moves: #{dnal}"
 
     # 2- Oponnent's threats
     opp_color = starting_cell.opponent_color
     opp_threats = threats_map(board, opp_color)
+
+    puts "Debug: Opponent's threats: #{opp_threats}"
+
     # 3- Filter
     # here forward pawn move count as a threat move
     potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
-    stripped_moves = potential_moves.map { |move| move.delete('x') }
+    stripped_moves = strip_x_from_moves(potential_moves)
+
+    puts "Debug: Potential moves after threat removal: #{potential_moves}"
+    puts "Debug: Stripped moves: #{stripped_moves}"
 
     # 4- Second Filter for capture that would put the king in check
     # On an transition_board, make the king  move on each potential_moves 
     # then apply is_in_check? to discard illegal moves
     legal_moves = stripped_moves.select do |move|
-      transition_board = board.dup
+      transition_board = board.deep_dup
       transition_board.make_move(starting_cell.coordinate, move)
-      !is_in_check?(transition_board, move)
-    end
 
+      in_check = is_in_check?(transition_board, move)
+      puts "Debug: checking move #{move}: in_check = #{in_check}"
+
+      !in_check
+    end
+    
+    puts "Debug: legal moves: #{legal_moves.sort}"
     legal_moves.sort
   end
 
@@ -216,7 +231,9 @@ class Movement
 
     opp_color = king.opponent_color
     opp_threats = threats_map(board, opp_color)
-    opp_threats.include?(king.coordinate)
+    opp_threats_stripped = strip_x_from_moves(opp_threats)
+    puts "Debug: King position #{king_cell}, opponent threats: #{opp_threats_stripped}"
+    opp_threats_stripped.include?(king_cell)
   end
 
   
@@ -230,6 +247,11 @@ class Movement
       'k' => { 'h' => 1, 'v' => 1, 'd' => 1 }
     }
     offsets[piece.downcase][direction]
+  end
+
+  # strip_x_from_moves: given a array of moves, strip any 'x' occurence in a move
+  def strip_x_from_moves(moves)
+    moves.map { |move| move.delete('x') }
   end
 
 end

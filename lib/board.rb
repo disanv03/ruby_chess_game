@@ -16,8 +16,13 @@ class Board
   def make_move(origin, destination)
     from = cell(origin)
     to = cell(destination)
+
+    puts "Debug: Making move from #{origin} to #{destination}"
+    puts "Debug: before move - Origin content: #{from.content}, Destination content: #{to.content}"
+
     to.content = from.content.dup
     from.content = nil
+    puts "Debug: after move - origin content: #{from.content}, destination content: #{to.content}"
   end
 
   # make_board: parse a fen to a Board, setting up each cell using chess notation
@@ -81,6 +86,19 @@ class Board
   # get_square: getting from array notation the corresponding Cell
   def get_square(arr)
     @board[arr[0]][arr[1]]
+  end
+
+  # deep_dup: making a deep copy of the board to ensure that each
+  # move simulation operates on an independant board state
+  def deep_dup
+    new_board = Board.new
+
+    new_board.board = @board.map do |y|
+      y.map do |x_cell|
+        x_cell.deep_dup
+      end
+    end
+    new_board
   end
 
   private

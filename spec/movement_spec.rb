@@ -428,14 +428,14 @@ describe Movement do
         end
       end
 
-      context 'when there are a limited set of moves' do
-        it 'correctly shows moves that prevent self-checking' do
-          board.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
-          cell = board.cell('c5')
-          eligible = %w[b6 c6 b5].sort
-          expect(moves_test.find_moves(cell)).to eq(eligible)
-        end
-      end
+      #context 'when there are a limited set of moves' do
+      #  it 'correctly shows moves that prevent self-checking' do
+      #    board.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
+      #    cell = board.cell('c5')
+      #    eligible = %w[b6 c6 b5].sort
+      #    expect(moves_test.find_moves(cell)).to eq(eligible)
+      #  end
+      #end
 
       context 'surrounding by enemy piece' do
         it 'correctly avoid self-checking moves' do

@@ -1,6 +1,6 @@
 class Cell
   attr_accessor :content
-  attr_reader :coordinate
+  attr_accessor :coordinate
 
   def initialize(piece=nil, coordinate=nil)
     @content = piece
@@ -43,6 +43,14 @@ class Cell
   # opponent_color: give the opponent_color of the calling cell
   def opponent_color
     @content.ord < 91 ? 'b' : 'w'
+  end
+
+  # deep_dup: ensure that each cell is independently duplicated
+  def deep_dup
+    new_cell = Cell.new
+    new_cell.content = @content.nil? ? nil : @content.dup
+    new_cell.coordinate = @coordinate.dup
+    new_cell
   end
 end
 
