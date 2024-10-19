@@ -50,7 +50,7 @@ class Movement
     potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
     stripped_moves = strip_x_from_moves(potential_moves)
 
-    puts "Debug: Potential moves after threat removal: #{potential_moves}"
+    puts "Debug: Potential moves after opp_threats removal: #{potential_moves}"
     puts "Debug: Stripped moves: #{stripped_moves}"
 
     # 4- Second Filter for capture that would put the king in check
@@ -99,11 +99,11 @@ class Movement
 
   # find_pawn_moves: direction is different depending on colors.
   # Also give the correct starting point.
-  def find_pawn_moves(starting_cell, board = @board)
+  def find_pawn_moves(starting_cell, board = @board, on_attack = false)
     return nil unless %w[p P].include?(starting_cell.content)
     direction_from_color = (starting_cell.content == 'P' ? -1 : 1)
     home_rank = starting_cell.content == 'P' ? 6 : 1
-    compute_pawn_moves(starting_cell, direction_from_color, home_rank, board)
+    compute_pawn_moves(starting_cell, direction_from_color, home_rank, board, on_attack)
   end
 
   # find_queen_moves: combine all directions do get the complete
@@ -120,12 +120,12 @@ class Movement
   end
 
   # find_moves: orienting toward the correct function moves
-  def find_moves(starting_cell, board = @board)
+  def find_moves(starting_cell, board = @board, on_attack = false)
     return nil if starting_cell.empty?
 
     case starting_cell.content
     when 'p', 'P'
-      find_pawn_moves(starting_cell, board)
+      find_pawn_moves(starting_cell, board, on_attack)
     when 'n', 'N'
       find_knight_moves(starting_cell, board)
     when 'k', 'K'
@@ -183,42 +183,48 @@ class Movement
 
   # compute_pawn_moves: listing correct pawn moves, including
   # simple forward, double forward, simple captures (and en passant capture)
-  def compute_pawn_moves(starting_cell, direction, home_rank, board = @board)
+  # Distinction between pawn moves and attacks (potential moves, potential attacks)
+  def compute_pawn_moves(starting_cell, direction, home_rank, board = @board, on_attack = false)
     start = board.std_chess_to_arr(starting_cell.coordinate)
     double_fwd = start[0] == home_rank
-    result = []
+    move_results = []
+    attack_results = []
     
     # simple forward and double forward offsets
-    next_refs = double_fwd ? [[start[0] + direction, start[1]], [start[0] + (direction * 2), start[1]]] : [[start[0] + direction, start[1]]]
-    next_refs.each do |arr_moves|
+    forward_moves = double_fwd ? [[start[0] + direction, start[1]], [start[0] + (direction * 2), start[1]]] : [[start[0] + direction, start[1]]]
+    forward_moves.each do |arr_moves|
       next if arr_moves.any?(&:negative?) || arr_moves.any? { |x| x > 7 }
       next_ref = board.get_square(arr_moves)
-      result << next_ref.to_s if next_ref.empty?
+      move_results << next_ref.to_s if next_ref.empty?
       break unless next_ref.empty?
     end
 
     # simple captures, if opponent piece stand on his forward diagonal
-    next_refs = [[start[0] + direction, start[1] - 1], [start[0] + direction, start[1] + 1]]
-    next_refs.each do |arr_moves|
+    attack_offsets = [[start[0] + direction, start[1] - 1], [start[0] + direction, start[1] + 1]]
+    attack_offsets.each do |arr_moves|
       next if arr_moves.any?(&:negative?) || arr_moves.any? { |x| x > 7 }
       next_ref = board.get_square(arr_moves)
-      capture = next_ref.capture?(starting_cell.content) ? 'x' : ''
-      result << (capture + next_ref.to_s) if !next_ref.empty? && next_ref.capture?(starting_cell.content)
+      if next_ref.capture?(starting_cell.content)
+        move_results << 'x' + next_ref.to_s # capture move
+      else
+        attack_results << next_ref.to_s # attack (hitting square)
+      end
     end
 
     # en passant capture available ?
     # comming soon...
 
-    result.sort
+    on_attack ? attack_results.sort : move_results.sort
   end
 
   # threats_map: looping the board and identify all opponent's threats
   def threats_map(board_instance, opp_color)
+    on_attack = true
     threats = []
     board_instance.board.each_with_index do |x, y|
       x.each_with_index do |cell, x|
         next if cell.empty? || cell.color != opp_color
-        piece_threats = find_moves(cell)
+        piece_threats = find_moves(cell, board_instance, on_attack)
         threats.concat(piece_threats)
       end
     end

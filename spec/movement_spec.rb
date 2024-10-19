@@ -419,7 +419,7 @@ describe Movement do
     end
 
     context 'with a King as input' do
-      context 'friendly piece on one side, enemy on the other' do
+      context 'friendly piece on c4, and enemy piece Nc3 and e4' do
         it 'from d4, returns correct list of available moves including capture' do
           board.make_board('8/8/8/8/2pkP3/2N6/8/8 b - - 1 2')
           cell = board.cell('d4')
@@ -429,7 +429,7 @@ describe Movement do
       end
 
       #context 'when there are a limited set of moves' do
-      #  it 'correctly shows moves that prevent self-checking' do
+      #  it 'correctly shows moves that prevent self-checking, Rd4, Bc3, Ke1!' do
       #    board.make_board('8/8/8/2k5/3R4/2B5/8/4K3 b - - 1 2')
       #    cell = board.cell('c5')
       #    eligible = %w[b6 c6 b5].sort
@@ -437,7 +437,7 @@ describe Movement do
       #  end
       #end
 
-      context 'surrounding by enemy piece' do
+      context 'surrounding by enemy piece, Bd3 and e4' do
         it 'correctly avoid self-checking moves' do
           board.make_board('8/8/8/8/2pkP3/3B4/8/8 b - - 1 2')
           cell = board.cell('d4')
