@@ -26,7 +26,7 @@ class Movement
 
   # find_king_moves: give all legals king move
   # Protected opponent pieces need to become capture impossible
-  def find_king_moves(starting_cell, board = @board)
+  def find_king_moves(starting_cell, board = @board, king_minimal = false)
     piece = starting_cell.content
     return nil unless piece == 'K' || piece == 'k'
 
@@ -39,17 +39,19 @@ class Movement
     puts "Debug: horizontal moves: #{htal}"
     puts "Debug: diagonal moves: #{dnal}"
 
+    if king_minimal
+      return (vcal + htal + dnal).uniq
+    end
+
     # 2- Oponnent's threats
     opp_color = starting_cell.opponent_color
-    opp_threats = threats_map(board, opp_color)
-
+    opp_threats = threats_map(board, opp_color, king_minimal: true)
     puts "Debug: Opponent's threats: #{opp_threats}"
 
     # 3- Filter
     # here forward pawn move count as a threat move
     potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
     stripped_moves = strip_x_from_moves(potential_moves)
-
     puts "Debug: Potential moves after opp_threats removal: #{potential_moves}"
     puts "Debug: Stripped moves: #{stripped_moves}"
 
@@ -120,7 +122,7 @@ class Movement
   end
 
   # find_moves: orienting toward the correct function moves
-  def find_moves(starting_cell, board = @board, on_attack = false)
+  def find_moves(starting_cell, board = @board, on_attack = false, king_minimal = false)
     return nil if starting_cell.empty?
 
     case starting_cell.content
@@ -129,7 +131,7 @@ class Movement
     when 'n', 'N'
       find_knight_moves(starting_cell, board)
     when 'k', 'K'
-      find_king_moves(starting_cell, board)
+      find_king_moves(starting_cell, board, king_minimal)
     when 'b', 'B'
       diagonal_move(starting_cell, board)
     when 'r', 'R'
@@ -218,13 +220,13 @@ class Movement
   end
 
   # threats_map: looping the board and identify all opponent's threats
-  def threats_map(board_instance, opp_color)
+  def threats_map(board_instance, opp_color, king_minimal = true)
     on_attack = true
     threats = []
     board_instance.board.each_with_index do |x, y|
       x.each_with_index do |cell, x|
         next if cell.empty? || cell.color != opp_color
-        piece_threats = find_moves(cell, board_instance, on_attack)
+        piece_threats = find_moves(cell, board_instance, on_attack, king_minimal)
         threats.concat(piece_threats)
       end
     end
