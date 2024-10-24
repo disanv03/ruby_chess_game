@@ -23,6 +23,11 @@ class Cell
     @content.nil? ? '1' : @content
   end
 
+  # to_display: helper for printing the board on the terminal
+  def to_display
+    @content.nil? ? ' ' : @content
+  end
+
   # capture?: check if capture is allowed
   # the method is better read from right to left giving:
   # does the argument can capture the calling cell content.
