@@ -23,7 +23,7 @@ class Display
     cell_counter = 0
     board.board.each do |y|
       y.each do |cell|
-        print colorize_background(" #{PIECE_LOOKUP[cell.to_display]} ", cell_counter.odd?)
+        print colorize_background(" #{PIECE_LOOKUP[cell.to_display]} ", cell_counter.even?)
         cell_counter += 1
       end
       puts
@@ -31,11 +31,11 @@ class Display
     end
   end
 
-  def colorize_background(text, alternate = false)
+  def colorize_background(text, white)
     # dark brown for black, light brown for white
     # \e[48;5;94m dark brown
     # \e[48;5;137m lighter brown
-    background_code = alternate ? "\e[48;5;94m" : "\e[48;5;137m" 
+    background_code = white ? "\e[48;5;137m" : "\e[48;5;94m"
     "#{background_code}#{text}\e[0m"
   end
 
