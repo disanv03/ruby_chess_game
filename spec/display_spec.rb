@@ -13,6 +13,10 @@ describe Display do
     end
 
     it 'display random position' do
+      board.make_board('8/8/3pp3/8/3n4/8/2P5/8 b - - 1 2')
+      eligible = %w[xc2 e2 b3 b5 c6 f5 f3].sort
+      display.show_board(moves: eligible)
+      expect {display.show_board(moves: eligible)}.to output.to_stdout
     end
   end
 end
