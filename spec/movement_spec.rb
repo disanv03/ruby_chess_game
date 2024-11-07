@@ -480,6 +480,17 @@ describe Movement do
 
     end
 
+
+    context 'prevents moves that is pinned with a King behind' do
+      it 'shows moves that prevents putting the king in check' do
+        board.make_board('8/8/8/4k3/4n3/8/4R3/K7 b - - 0 1')
+        cell = board.cell('e4')
+        eligible = %w[]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+    end
+
+
     context 'with a Rook as input' do
     end
 
