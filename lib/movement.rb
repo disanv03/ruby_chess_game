@@ -1,4 +1,7 @@
 class Movement
+
+  EMPTY_FEN = '8/8/8/8/8/8/8/8 w - - 0 1'
+
   def initialize(board=nil)
     @board = board
   end
@@ -244,7 +247,20 @@ class Movement
     opp_threats_stripped.include?(king_cell)
   end
 
-  
+  # target_the_king: abstracting the piece on an empty board, to check
+  # if it does target the king
+  def target_the_king(king_cell)
+    empty_board = Board.new
+    threats = []
+    @board.board.flatten.each do |cell|
+      next if cell.empty? || (cell.content == 'K' || king.content == 'k')
+      empty_board.make_board(EMPTY_FEN)
+      piece_threats = find_moves(cell, empty_board)
+      threats << cell if piece_threats.include?(king_cell.coordinate)
+    end
+    threats
+  end
+
   # piece_offset: returns the right offset number for a given piece
   def piece_offset(piece, direction)
     offsets = {
