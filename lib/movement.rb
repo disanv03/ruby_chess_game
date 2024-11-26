@@ -248,7 +248,7 @@ class Movement
   end
 
   # target_the_king: abstracting the piece on an empty board, to check
-  # if it does target the king
+  # if it does target the king (above rules boundaries)
   def target_the_king(king_cell)
     empty_board = Board.new
     threats = []

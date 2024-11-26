@@ -481,13 +481,50 @@ describe Movement do
     end
 
 
+    # Absolute Pin Tests:
     context 'prevents moves that is pinned with a King behind' do
-      it 'shows moves that prevents putting the king in check' do
+      it 'Knight pinned, (king behind) no move available' do
         board.make_board('8/8/8/4k3/4n3/8/4R3/K7 b - - 0 1')
         cell = board.cell('e4')
         eligible = %w[]
         expect(moves_test.find_moves(cell)).to eq(eligible)
       end
+
+      it 'Rook pinned, (king one square behind) 3 possible moves' do
+        board.make_board('8/8/4k3/4r3/8/8/4R3/K7 b - - 0 1')
+        cell = board.cell('e5')
+        eligible = %w[e4 e3 e2]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
+      it 'Queen pinned, 2 possible moves' do
+        board.make_board('8/8/8/3k4/4q3/8/6Q1/K7 b - - 0 1')
+        cell = board.cell('e4')
+        eligible = %w[f3 g2]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
+      it 'Queen pinned by a bishop, 4 possible moves' do
+        board.make_board('8/1k6/2q5/8/8/8/4R1B1/K7 b - - 0 1')
+        cell = board.cell('c6')
+        eligible = %w[d5 e4 f3 g2]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
+      it 'Queen pinned by bishop on g2, and Knight c5 check, no legal move for the queen' do
+        board.make_board('8/1k6/2q5/2N5/8/8/4R1B1/K7 b - - 0 1')
+        cell = board.cell('c6')
+        eligible = %w[]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
+      it 'Pinned pawn, Queen the same diagonnal targeted by Bg2' do
+        board.make_board('8/1k6/2p5/3q4/8/8/4R1B1/K7 b - - 0 1')
+        cell = board.cell('d5') # Square of the Queen
+        eligible = %w[a5 b5 c5 e5 f5 g5 h5 d6 d7 d8 d4 d3 d2 d1 a2 b3 c4 e6 f7 g8 e4 f3 g2]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
     end
 
 
