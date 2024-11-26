@@ -1,11 +1,17 @@
 class Movement
 
+  attr_reader :en_passant
+  attr_accessor :bking, :wKing
+
   EMPTY_FEN = '8/8/8/8/8/8/8/8 w - - 0 1'
 
   def initialize(board=nil)
     @board = board
+    @en_passant = nil
+    @bking = nil
+    @wKing = nil
   end
-   
+
   # horizontal_move: finding legal horizontal moves
   def horizontal_move(starting_cell, board = @board)
     directions = [-1, 1]
@@ -146,6 +152,60 @@ class Movement
     end
   end
 
+  # legal_moves: check is the current move is a legal move.
+  # (Making absolute pinned piece unmovable)
+  def legal_moves(cell)
+    return nil if cell.empty?
+
+    case cell.content
+    when 'k', 'K'
+      find_king_moves(cell)
+    else
+      moves = find_moves(cell)
+
+      # Finding both kings coordinates on the board
+      @board.board.flatten.each do |king_cell|
+        # here find cell.content 'k' or 'K' 
+        if king_cell.content == 'K'
+          @wKing = king_cell.coordinate
+        elsif king_cell.content == 'k'
+          @bking = king_cell.coordinate
+        end
+      end
+
+      # Relevant king based on the piece's color
+      king = cell.content == cell.content.upcase ? @wKing : @bking
+      
+      # Find all "checking" attacking pieces
+      find_attackers = target_the_king(@board.cell(king))
+      return moves if find_attackers.empty?
+
+      results = []
+      find_attackers.each do |checking_cell|
+        # Find the path from the checking_cell toward the current king
+        path = path_to_king(checking_cell.coordinate, king)
+
+        # Check for absolute pins
+        path.each do |path_cell|
+          if path_cell.coordinate == cell.coordinate
+            # if cell on the path and only piece between attacker and king
+            if path.size == 2 # only the king and the piece on the path
+              # the piece is pinned and cannot move
+              return []
+            end
+          end
+        end
+
+        # Allow moves that block or capture the checking piece
+        path_to_block_or_capture = path[0..-2] # exclude the king's position
+        results.concat(moves & path_to_block_or_capture)
+      end
+      results.uniq
+    end
+  end
+
+  # path_to_king: comming soon...
+
   private
   # move_in_directions: depending on the given type direction it find the correct moves
   def move_in_directions(starting_cell, directions, offset, type, board)
@@ -236,6 +296,7 @@ class Movement
     threats.uniq
   end
 
+  # is_in_check: boolean to check either the king is in check or not
   def is_in_check?(board, king_cell)
     king = board.cell(king_cell)
     return nil unless king.content == 'K' || king.content == 'k'

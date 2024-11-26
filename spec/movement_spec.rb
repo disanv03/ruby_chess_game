@@ -493,7 +493,7 @@ describe Movement do
       it 'Rook pinned, (king one square behind) 3 possible moves' do
         board.make_board('8/8/4k3/4r3/8/8/4R3/K7 b - - 0 1')
         cell = board.cell('e5')
-        eligible = %w[e4 e3 e2]
+        eligible = %w[e4 e3 e2].sort
         expect(moves_test.find_moves(cell)).to eq(eligible)
       end
 
@@ -521,7 +521,7 @@ describe Movement do
       it 'Pinned pawn, Queen the same diagonnal targeted by Bg2' do
         board.make_board('8/1k6/2p5/3q4/8/8/4R1B1/K7 b - - 0 1')
         cell = board.cell('d5') # Square of the Queen
-        eligible = %w[a5 b5 c5 e5 f5 g5 h5 d6 d7 d8 d4 d3 d2 d1 a2 b3 c4 e6 f7 g8 e4 f3 g2]
+        eligible = %w[a5 b5 c5 e5 f5 g5 h5 d6 d7 d8 d4 d3 d2 d1 a2 b3 c4 e6 f7 g8 e4 f3 g2].sort
         expect(moves_test.find_moves(cell)).to eq(eligible)
       end
 
