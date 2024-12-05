@@ -152,9 +152,9 @@ class Movement
     end
   end
 
-  # legal_moves: check is the current move is a legal move.
+  # is_legal_moves: check is the current move is a legal move.
   # (Making absolute pinned piece unmovable)
-  def legal_moves(cell)
+  def is_legal_moves(cell)
     return nil if cell.empty?
 
     case cell.content
@@ -185,15 +185,26 @@ class Movement
         # Find the path from the checking_cell toward the current king
         path = path_to_king(checking_cell.coordinate, king)
 
+        piece_in_path = nil
+        
         # Check for absolute pins
         path.each do |path_cell|
-          if path_cell.coordinate == cell.coordinate
-            # if cell on the path and only piece between attacker and king
-            if path.size == 2 # only the king and the piece on the path
-              # the piece is pinned and cannot move
-              return []
+          if path_cell.content && path_cell.content != checking_cell.content
+            if piece_in_path
+              # more that one piece between attacker and king - no pin
+              piece_in_path = nil
+              break
+            else
+              # first piece found in path
+              piece_in_path = path_cell
             end
           end
+        end
+
+        # if one piece is on the path and it's an opp piece, it's pinned
+        if piece_in_path && piece_in_path.content.color != cell.content.color
+          # if the path has only one piece between attacker and king
+          return [] if path.size == 1
         end
 
         # Allow moves that block or capture the checking piece
@@ -204,7 +215,45 @@ class Movement
     end
   end
 
-  # path_to_king: comming soon...
+  # path_to_king: give all cell on the path to king
+  def path_to_king(checking_coord, king_coord)
+    path = []
+
+    # determine the direction from the checking_cell to king
+    directions = determine_direction(checking_coord, king_coord)
+
+    # generate path
+    current_coord = checking_coord
+    loop do
+      current_coord = step_in_king_path(current_coord, directions)
+      break if current_coord == king_coord
+      path << @board.cell(current_coord)
+    end
+  end
+
+  # determine_directions: comparing from_coord & to_coord
+  # and giving the direction in array like [y , x]
+  def determine_direction(from_coord, to_coord)
+    y1, x1 = from_coord
+    y2, x2 = to_coord
+
+    # spaceship operator: 
+    # -1 if left operand is less
+    # 0 if left operand is equal
+    # 1 if left operand is greater
+    dy = y2 <=> y1
+    dx = x2 <=> x1
+
+    [dy, dx]
+  end
+
+  # step_in_king_path: moving along the king path
+  def step_in_king_path(coord, direction)
+    y, x = coord
+    dy, dx = direction
+
+    [y + dy, x + dx]
+  end
 
   private
   # move_in_directions: depending on the given type direction it find the correct moves
