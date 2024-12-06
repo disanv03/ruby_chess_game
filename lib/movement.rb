@@ -153,66 +153,66 @@ class Movement
   end
 
   # is_legal_moves: check is the current move is a legal move.
+  # return empty array if illegal, list of valid move otherwise
   # (Making absolute pinned piece unmovable)
   def is_legal_moves(cell)
-    return nil if cell.empty?
+    return [] if cell.empty?
 
-    case cell.content
-    when 'k', 'K'
-      find_king_moves(cell)
-    else
-      moves = find_moves(cell)
-
-      # Finding both kings coordinates on the board
-      @board.board.flatten.each do |king_cell|
-        # here find cell.content 'k' or 'K' 
-        if king_cell.content == 'K'
-          @wKing = king_cell.coordinate
-        elsif king_cell.content == 'k'
-          @bking = king_cell.coordinate
-        end
-      end
-
-      # Relevant king based on the piece's color
-      king = cell.content == cell.content.upcase ? @wKing : @bking
-      
-      # Find all "checking" attacking pieces
-      find_attackers = target_the_king(@board.cell(king))
-      return moves if find_attackers.empty?
-
-      results = []
-      find_attackers.each do |checking_cell|
-        # Find the path from the checking_cell toward the current king
-        path = path_to_king(checking_cell.coordinate, king)
-
-        piece_in_path = nil
-        
-        # Check for absolute pins
-        path.each do |path_cell|
-          if path_cell.content && path_cell.content != checking_cell.content
-            if piece_in_path
-              # more that one piece between attacker and king - no pin
-              piece_in_path = nil
-              break
+    # get all possible moves of piece of the given cell
+    moves = case cell.content
+            when 'k', 'K'
+              find_king_moves(cell)
             else
-              # first piece found in path
-              piece_in_path = path_cell
+              find_moves(cell)
             end
-          end
-        end
 
-        # if one piece is on the path and it's an opp piece, it's pinned
-        if piece_in_path && piece_in_path.content.color != cell.content.color
-          # if the path has only one piece between attacker and king
-          return [] if path.size == 1
-        end
-
-        # Allow moves that block or capture the checking piece
-        path_to_block_or_capture = path[0..-2] # exclude the king's position
-        results.concat(moves & path_to_block_or_capture)
+    
+    # Finding both kings coordinates on the board
+    @board.board.flatten.each do |king_cell|
+      # here find cell.content 'k' or 'K' 
+      if king_cell.content == 'K'
+        @wKing = king_cell.coordinate
+      elsif king_cell.content == 'k'
+        @bking = king_cell.coordinate
       end
-      results.uniq
     end
+
+    # Relevant king based on the piece's color
+    king = cell.content == cell.content.upcase ? @wKing : @bking
+      
+    # Find all "checking" attacking pieces
+    find_attackers = target_the_king(@board.cell(king))
+    return moves if find_attackers.empty?
+
+    # check if the piece on the given cell is pinned
+    find_attackers.each do |checking_cell|
+      # Find the path from the checking_cell toward the current king
+      path = path_to_king(checking_cell.coordinate, king)
+      piece_in_path = nil
+      
+      # Check for absolute pins
+      path.each do |path_cell|
+        next unless path_cell == cell || !path_cell.content.nil?
+
+        if path_cell == cell
+          piece_in_path = cell
+        elsif piece_in_path
+          # more than once piece between attacker and king - no pin
+          piece_in_path = nil
+          break
+        else 
+          # first piece found in path
+          piece_in_path = path_cell
+        end
+      end
+
+      # if piece is the same as the given cell and the only one, it's pinned
+      if piece_in_path == cell 
+        return []
+      end
+    end
+
+    moves
   end
 
   # path_to_king: give all cell on the path to king
