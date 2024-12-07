@@ -1,7 +1,7 @@
 class Movement
 
   attr_reader :en_passant
-  attr_accessor :bking, :wKing
+  attr_accessor :bking, :wking
 
   EMPTY_FEN = '8/8/8/8/8/8/8/8 w - - 0 1'
 
@@ -9,7 +9,7 @@ class Movement
     @board = board
     @en_passant = nil
     @bking = nil
-    @wKing = nil
+    @wking = nil
   end
 
   # horizontal_move: finding legal horizontal moves
@@ -152,6 +152,28 @@ class Movement
     end
   end
 
+  # find_kings_coordinates: give both white and black king coordinates
+  def find_kings_coordinates
+    @board.board.flatten.each do |king_cell|
+      # here find cell.content 'k' or 'K' 
+      if king_cell.content == 'K'
+        puts
+        puts "Debugging: king_cell inspect: #{king_cell.inspect}"
+        @wking = king_cell
+      elsif king_cell.content == 'k'
+        puts
+        puts "Debugging: king_cell inspect: #{king_cell.inspect}"
+        @bking = king_cell
+      end
+    end
+  end
+
+  # determine_relevant_king: finding the relevant king
+  # the one the piece is pinned to.
+  def determine_relevant_king(cell)
+    cell.content == cell.content.upcase ? @wking : @bking
+  end
+  
   # is_legal_moves: check is the current move is a legal move.
   # return empty array if illegal, list of valid move otherwise
   # (Making absolute pinned piece unmovable)
@@ -166,28 +188,21 @@ class Movement
               find_moves(cell)
             end
 
+    find_kings_coordinates 
     
-    # Finding both kings coordinates on the board
-    @board.board.flatten.each do |king_cell|
-      # here find cell.content 'k' or 'K' 
-      if king_cell.content == 'K'
-        @wKing = king_cell.coordinate
-      elsif king_cell.content == 'k'
-        @bking = king_cell.coordinate
-      end
-    end
-
     # Relevant king based on the piece's color
-    king = cell.content == cell.content.upcase ? @wKing : @bking
+    king = determine_relevant_king(cell)
       
     # Find all "checking" attacking pieces
-    find_attackers = target_the_king(@board.cell(king))
+    find_attackers = target_the_king(king)
     return moves if find_attackers.empty?
 
     # check if the piece on the given cell is pinned
     find_attackers.each do |checking_cell|
+      puts "Debugging: checking_cell #{checking_cell.inspect}"
       # Find the path from the checking_cell toward the current king
-      path = path_to_king(checking_cell.coordinate, king)
+      path = path_to_king(checking_cell.coordinate, king.coordinate)
+      puts "Debugging: path_to_king => #{path.inspect}"
       piece_in_path = nil
       
       # Check for absolute pins
@@ -208,6 +223,7 @@ class Movement
 
       # if piece is the same as the given cell and the only one, it's pinned
       if piece_in_path == cell 
+        puts "Debugging: #{cell.content}#{piece_in_path} is pinned !"
         return []
       end
     end
@@ -219,23 +235,35 @@ class Movement
   def path_to_king(checking_coord, king_coord)
     path = []
 
+    puts "PATH TO KING:"
+    puts "Debugging: checking_coord #{checking_coord}"
+    puts "Debugging: king_coord #{king_coord}"
+    puts "-------------"
     # determine the direction from the checking_cell to king
     directions = determine_direction(checking_coord, king_coord)
+    puts "FROM CHECK TO KING DIRECTION:"
+    puts "Debugging: directions => #{directions.inspect}"
 
     # generate path
     current_coord = checking_coord
     loop do
       current_coord = step_in_king_path(current_coord, directions)
+      puts "Debugging: current_coord => #{current_coord}"
       break if current_coord == king_coord
       path << @board.cell(current_coord)
     end
+    path
   end
 
   # determine_directions: comparing from_coord & to_coord
   # and giving the direction in array like [y , x]
   def determine_direction(from_coord, to_coord)
-    y1, x1 = from_coord
-    y2, x2 = to_coord
+    y1, x1 = @board.std_chess_to_arr(from_coord)
+    y2, x2 = @board.std_chess_to_arr(to_coord)
+
+    puts "DETERMINE_DIRECTION:"
+    puts "Debugging y1, x1: #{y1}, #{x1}"
+    puts "Debugging y2, x2: #{y2}, #{x2}"
 
     # spaceship operator: 
     # -1 if left operand is less
@@ -249,10 +277,10 @@ class Movement
 
   # step_in_king_path: moving along the king path
   def step_in_king_path(coord, direction)
-    y, x = coord
+    y, x = @board.std_chess_to_arr(coord)
     dy, dx = direction
 
-    [y + dy, x + dx]
+    @board.arr_to_std_chess([y + dy, x + dx])
   end
 
   private
@@ -363,7 +391,7 @@ class Movement
     empty_board = Board.new
     threats = []
     @board.board.flatten.each do |cell|
-      next if cell.empty? || (cell.content == 'K' || king.content == 'k')
+      next if cell.empty? || (cell.content == 'K' || cell.content == 'k')
       empty_board.make_board(EMPTY_FEN)
       piece_threats = find_moves(cell, empty_board)
       threats << cell if piece_threats.include?(king_cell.coordinate)
