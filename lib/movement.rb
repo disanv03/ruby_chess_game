@@ -223,7 +223,9 @@ class Movement
 
       # if piece is the same as the given cell and the only one, it's pinned
       if piece_in_path == cell 
+        puts "-------------"
         puts "Debugging: #{cell.content}#{piece_in_path} is pinned !"
+        puts "-------------"
         return []
       end
     end
