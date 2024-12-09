@@ -44,10 +44,6 @@ class Movement
     htal = horizontal_move(starting_cell)
     dnal = diagonal_move(starting_cell)
     
-    puts "Debug: vertical moves: #{vcal}"
-    puts "Debug: horizontal moves: #{htal}"
-    puts "Debug: diagonal moves: #{dnal}"
-
     if king_minimal
       return (vcal + htal + dnal).uniq
     end
@@ -157,11 +153,9 @@ class Movement
     @board.board.flatten.each do |king_cell|
       # here find cell.content 'k' or 'K' 
       if king_cell.content == 'K'
-        puts
         puts "Debugging: king_cell inspect: #{king_cell.inspect}"
         @wking = king_cell
       elsif king_cell.content == 'k'
-        puts
         puts "Debugging: king_cell inspect: #{king_cell.inspect}"
         @bking = king_cell
       end
@@ -188,6 +182,8 @@ class Movement
               find_moves(cell)
             end
 
+    puts "Debugging: starting moves => #{moves}"
+
     find_kings_coordinates 
     
     # Relevant king based on the piece's color
@@ -195,10 +191,16 @@ class Movement
       
     # Find all "checking" attacking pieces
     find_attackers = target_the_king(king)
+    puts "Debugging: target_the_king => #{find_attackers.inspect}"
     return moves if find_attackers.empty?
 
     # check if the piece on the given cell is pinned
     find_attackers.each do |checking_cell|
+      # check here if the king_is_in_check
+      # giving the priority piece to handle
+      in_check = is_in_check?(@board, king.coordinate)
+      puts "Debugging: is_in_check: #{in_check}"
+
       puts "Debugging: checking_cell #{checking_cell.inspect}"
       # Find the path from the checking_cell toward the current king
       path = path_to_king(checking_cell.coordinate, king.coordinate)
@@ -226,11 +228,28 @@ class Movement
         puts "-------------"
         puts "Debugging: #{cell.content}#{piece_in_path} is pinned !"
         puts "-------------"
-        return []
+
+        legal_moves = []
+
+        # check if pinned piece can capture the checking piece
+        if moves.include?("x#{checking_cell.coordinate}")
+          legal_moves << checking_cell.coordinate
+        end
+
+        path.each do |path_cell|
+          break if path_cell == king
+          if moves.include?(path_cell.coordinate)
+            legal_moves << path_cell.coordinate
+          end
+        end
+        
+        puts "Debugging: legal_moves form the pinned piece #{legal_moves.inspect}"
+        return legal_moves.sort
       end
     end
 
-    moves
+    puts "Retruned by is_legal_moves: #{moves.inspect}"
+    strip_x_from_moves(moves).sort
   end
 
   # path_to_king: give all cell on the path to king
@@ -394,9 +413,11 @@ class Movement
     threats = []
     @board.board.flatten.each do |cell|
       next if cell.empty? || (cell.content == 'K' || cell.content == 'k')
-      empty_board.make_board(EMPTY_FEN)
-      piece_threats = find_moves(cell, empty_board)
-      threats << cell if piece_threats.include?(king_cell.coordinate)
+      if cell.color != king_cell.color
+        empty_board.make_board(EMPTY_FEN)
+        piece_threats = find_moves(cell, empty_board)
+        threats << cell if piece_threats.include?(king_cell.coordinate)
+      end
     end
     threats
   end
