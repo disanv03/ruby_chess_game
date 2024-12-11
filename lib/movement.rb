@@ -198,7 +198,7 @@ class Movement
     find_attackers.each do |checking_cell|
       # check here if the king_is_in_check
       # giving the priority piece to handle
-      in_check = is_in_check?(@board, king.coordinate)
+      in_check = is_in_check?(@board, king.coordinate, true)
       puts "Debugging: is_in_check: #{in_check}"
 
       puts "Debugging: checking_cell #{checking_cell.inspect}"
@@ -381,29 +381,45 @@ class Movement
   end
 
   # threats_map: looping the board and identify all opponent's threats
-  def threats_map(board_instance, opp_color, king_minimal = true)
+  def threats_map(board_instance, opp_color, king_minimal = true, key_and_moves = false)
     on_attack = true
-    threats = []
+    threats = key_and_moves ? {} : []
+
     board_instance.board.each_with_index do |x, y|
       x.each_with_index do |cell, x|
         next if cell.empty? || cell.color != opp_color
         piece_threats = find_moves(cell, board_instance, on_attack, king_minimal)
-        threats.concat(piece_threats)
+        if key_and_moves
+          threats[[cell]] = piece_threats
+        else
+          threats.concat(piece_threats)
+        end
       end
     end
-    threats.uniq
+    key_and_moves ? threats : threats.uniq
   end
 
   # is_in_check: boolean to check either the king is in check or not
-  def is_in_check?(board, king_cell)
+  def is_in_check?(board, king_cell, return_checking_piece_cell = false)
     king = board.cell(king_cell)
     return nil unless king.content == 'K' || king.content == 'k'
 
     opp_color = king.opponent_color
-    opp_threats = threats_map(board, opp_color)
-    opp_threats_stripped = strip_x_from_moves(opp_threats)
+    opp_threats = threats_map(board, opp_color, true, true)
+    opp_threats_stripped = strip_x_from_moves(opp_threats, true)
+    
     puts "Debug: King position #{king_cell}, opponent threats: #{opp_threats_stripped}"
-    opp_threats_stripped.include?(king_cell)
+
+    if opp_threats_stripped.values.flatten.include?(king_cell)
+      if return_checking_piece_cell
+        checking_piece_cell = opp_threats_stripped.find { |cell, moves| moves.include?(king_cell) }
+        return checking_piece_cell ? checking_piece_cell.first : nil
+      else
+        return true
+      end
+    else
+      return false
+    end
   end
 
   # target_the_king: abstracting the piece on an empty board, to check
@@ -435,8 +451,14 @@ class Movement
   end
 
   # strip_x_from_moves: given a array of moves, strip any 'x' occurence in a move
-  def strip_x_from_moves(moves)
-    moves.map { |move| move.delete('x') }
+  def strip_x_from_moves(moves, hash = false)
+    if hash
+      moves.each_with_object({}) do |(cell, move_list), stripped_moves|
+        stripped_moves[cell] = move_list.map { |move| move.delete('x') }
+      end
+    else
+      moves.map { |move| move.delete('x') }
+    end
   end
 
 end
