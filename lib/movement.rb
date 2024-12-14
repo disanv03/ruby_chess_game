@@ -182,6 +182,7 @@ class Movement
               find_moves(cell)
             end
 
+    puts "####"
     puts "Debugging: starting moves => #{moves}"
 
     find_kings_coordinates 
@@ -200,6 +201,28 @@ class Movement
       # giving the priority piece to handle
       in_check = is_in_check?(@board, king.coordinate, true)
       puts "Debugging: is_in_check: #{in_check}"
+
+
+      #special handling for knight checks
+      if checking_cell.content.downcase == 'n'
+        # if knight checking the king, the only legal moves for non-king
+        # is to capture the knight
+        legal_moves = []
+        if moves.include?("x#{checking_cell.coordinate}")
+          transition_board = @board.deep_dup
+          transition_board.make_move(cell.coordinate, checking_cell.coordinate)
+          in_check_after_move = is_in_check?(transition_board, king.coordinate)
+          puts "Debug: after removing #{checking_cell.coordinate} check: in_check = #{in_check_after_move}"
+          
+          if in_check_after_move
+            puts "---------"
+            puts "#{cell.content}#{cell.coordinate} is pinned"
+            puts "---------"
+            return legal_moves
+          end
+          return legal_moves << checking_cell.coordinate 
+        end
+      end
 
       puts "Debugging: checking_cell #{checking_cell.inspect}"
       # Find the path from the checking_cell toward the current king
