@@ -1,4 +1,5 @@
 class Display
+
   PIECE_LOOKUP = {
     'P' => "\u265F", # '♟'
     'R' => "\u265C", # '♜'
