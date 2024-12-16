@@ -17,12 +17,8 @@ class Board
     from = cell(origin)
     to = cell(destination)
 
-    puts "Debug: Making move from #{origin} to #{destination}"
-    puts "Debug: before move - Origin content: #{from.content}, Destination content: #{to.content}"
-
     to.content = from.content.dup
     from.content = nil
-    puts "Debug: after move - origin content: #{from.content}, destination content: #{to.content}"
   end
 
   # make_board: parse a fen to a Board, setting up each cell using chess notation

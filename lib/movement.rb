@@ -51,14 +51,11 @@ class Movement
     # 2- Oponnent's threats
     opp_color = starting_cell.opponent_color
     opp_threats = threats_map(board, opp_color, king_minimal: true)
-    puts "Debug: Opponent's threats: #{opp_threats}"
 
     # 3- Filter
     # here forward pawn move count as a threat move
     potential_moves = ((vcal + htal + dnal).uniq - opp_threats).sort
     stripped_moves = strip_x_from_moves(potential_moves)
-    puts "Debug: Potential moves after opp_threats removal: #{potential_moves}"
-    puts "Debug: Stripped moves: #{stripped_moves}"
 
     # 4- Second Filter for capture that would put the king in check
     # On an transition_board, make the king  move on each potential_moves 
@@ -68,12 +65,10 @@ class Movement
       transition_board.make_move(starting_cell.coordinate, move)
 
       in_check = is_in_check?(transition_board, move)
-      puts "Debug: checking move #{move}: in_check = #{in_check}"
 
       !in_check
     end
     
-    puts "Debug: legal moves: #{legal_moves.sort}"
     legal_moves.sort
   end
 
@@ -153,10 +148,8 @@ class Movement
     @board.board.flatten.each do |king_cell|
       # here find cell.content 'k' or 'K' 
       if king_cell.content == 'K'
-        puts "Debugging: king_cell inspect: #{king_cell.inspect}"
         @wking = king_cell
       elsif king_cell.content == 'k'
-        puts "Debugging: king_cell inspect: #{king_cell.inspect}"
         @bking = king_cell
       end
     end
@@ -182,8 +175,6 @@ class Movement
               find_moves(cell)
             end
 
-    puts "####"
-    puts "Debugging: starting moves => #{moves}"
 
     find_kings_coordinates 
     
@@ -192,7 +183,6 @@ class Movement
       
     # Find all "checking" attacking pieces
     find_attackers = target_the_king(king)
-    puts "Debugging: target_the_king => #{find_attackers.inspect}"
     return moves if find_attackers.empty?
 
     # check if the piece on the given cell is pinned
@@ -200,7 +190,6 @@ class Movement
       # check here if the king_is_in_check
       # giving the priority piece to handle
       in_check = is_in_check?(@board, king.coordinate, true)
-      puts "Debugging: is_in_check: #{in_check}"
 
 
       #special handling for knight checks
@@ -212,7 +201,6 @@ class Movement
           transition_board = @board.deep_dup
           transition_board.make_move(cell.coordinate, checking_cell.coordinate)
           in_check_after_move = is_in_check?(transition_board, king.coordinate)
-          puts "Debug: after removing #{checking_cell.coordinate} check: in_check = #{in_check_after_move}"
           
           if in_check_after_move
             puts "---------"
@@ -224,10 +212,8 @@ class Movement
         end
       end
 
-      puts "Debugging: checking_cell #{checking_cell.inspect}"
       # Find the path from the checking_cell toward the current king
       path = path_to_king(checking_cell.coordinate, king.coordinate)
-      puts "Debugging: path_to_king => #{path.inspect}"
       piece_in_path = nil
       
       # Check for absolute pins
@@ -248,9 +234,6 @@ class Movement
 
       # if piece is the same as the given cell and the only one, it's pinned
       if piece_in_path == cell 
-        puts "-------------"
-        puts "Debugging: #{cell.content}#{piece_in_path} is pinned !"
-        puts "-------------"
 
         legal_moves = []
 
@@ -266,12 +249,9 @@ class Movement
           end
         end
         
-        puts "Debugging: legal_moves form the pinned piece #{legal_moves.inspect}"
         return legal_moves.sort
       end
     end
-
-    puts "Retruned by is_legal_moves: #{moves.inspect}"
     strip_x_from_moves(moves).sort
   end
 
@@ -279,20 +259,13 @@ class Movement
   def path_to_king(checking_coord, king_coord)
     path = []
 
-    puts "PATH TO KING:"
-    puts "Debugging: checking_coord #{checking_coord}"
-    puts "Debugging: king_coord #{king_coord}"
-    puts "-------------"
     # determine the direction from the checking_cell to king
     directions = determine_direction(checking_coord, king_coord)
-    puts "FROM CHECK TO KING DIRECTION:"
-    puts "Debugging: directions => #{directions.inspect}"
 
     # generate path
     current_coord = checking_coord
     loop do
       current_coord = step_in_king_path(current_coord, directions)
-      puts "Debugging: current_coord => #{current_coord}"
       break if current_coord == king_coord
       path << @board.cell(current_coord)
     end
@@ -305,9 +278,6 @@ class Movement
     y1, x1 = @board.std_chess_to_arr(from_coord)
     y2, x2 = @board.std_chess_to_arr(to_coord)
 
-    puts "DETERMINE_DIRECTION:"
-    puts "Debugging y1, x1: #{y1}, #{x1}"
-    puts "Debugging y2, x2: #{y2}, #{x2}"
 
     # spaceship operator: 
     # -1 if left operand is less
@@ -431,7 +401,6 @@ class Movement
     opp_threats = threats_map(board, opp_color, true, true)
     opp_threats_stripped = strip_x_from_moves(opp_threats, true)
     
-    puts "Debug: King position #{king_cell}, opponent threats: #{opp_threats_stripped}"
 
     if opp_threats_stripped.values.flatten.include?(king_cell)
       if return_checking_piece_cell
