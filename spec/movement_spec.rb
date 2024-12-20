@@ -527,7 +527,7 @@ describe Movement do
       it 'Pinned pawn, Queen the same diagonnal targeted by Bg2' do
         board.make_board('8/1k6/2p5/3q4/8/8/4R1B1/K7 b - - 0 1')
         cell = board.cell('d5') # Square of the Queen
-        eligible = %w[a5 b5 c5 e5 f5 g5 h5 d6 d7 d8 d4 d3 d2 d1 a2 b3 c4 e6 f7 g8 e4 f3 g2].sort
+        eligible = %w[a5 b5 c5 e5 f5 g5 h5 d6 d7 d8 d4 d3 d2 d1 a2 b3 c4 e6 f7 g8 e4 f3 xg2].sort
         expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
 
@@ -541,13 +541,13 @@ describe Movement do
       it 'selecting the rook for blocking, show the correct list of move' do
         cell = board.cell('f6')
         eligible = %w[f8]
-        expect(moves_test.find_moves(cell)).to eq(eligible)
+        expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
 
       it 'selecting the black king, show that there is not move' do
         cell = board.cell('g8')
         eligible = %w[]
-        expect(moves_test.find_moves(cell)).to eq(eligible)
+        expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
     end
 

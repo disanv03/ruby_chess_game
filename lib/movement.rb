@@ -203,9 +203,6 @@ class Movement
           in_check_after_move = is_in_check?(transition_board, king.coordinate)
           
           if in_check_after_move
-            puts "---------"
-            puts "#{cell.content}#{cell.coordinate} is pinned"
-            puts "---------"
             return legal_moves
           end
           return legal_moves << checking_cell.coordinate 
@@ -252,7 +249,18 @@ class Movement
         return legal_moves.sort
       end
     end
-    strip_x_from_moves(moves).sort
+
+    moves.select do |move|
+      to_coordinate = strip_x_on(move)
+      !is_in_check_after_move?(@board, cell.coordinate, to_coordinate, king.coordinate)
+    end.sort
+end
+
+  # is_in_check_after_move?: check if making a move doesn't leave the king in check
+  def is_in_check_after_move?(board, from_coordinate, to_coordinate, king_coordinate)
+    transition_board = board.deep_dup
+    transition_board.make_move(from_coordinate, to_coordinate)
+    is_in_check?(transition_board, king_coordinate)
   end
 
   # path_to_king: give all cell on the path to king
@@ -451,6 +459,11 @@ class Movement
     else
       moves.map { |move| move.delete('x') }
     end
+  end
+
+  # strip_x_on: given a move, strip any 'x' if one
+  def strip_x_on(move)
+    move.gsub('x', '')
   end
 
 end
