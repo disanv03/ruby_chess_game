@@ -503,7 +503,7 @@ describe Movement do
       it 'Queen pinned, 2 possible moves' do
         board.make_board('8/8/8/3k4/4q3/8/6Q1/K7 b - - 0 1')
         cell = board.cell('e4')
-        eligible = %w[f3 g2]
+        eligible = %w[f3 g2].sort
         expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
 
@@ -511,7 +511,7 @@ describe Movement do
       it 'Queen pinned by a bishop, 4 possible moves' do
         board.make_board('8/1k6/2q5/8/8/8/4R1B1/K7 b - - 0 1')
         cell = board.cell('c6')
-        eligible = %w[d5 e4 f3 g2]
+        eligible = %w[d5 e4 f3 g2].sort
         expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
 
@@ -531,6 +531,24 @@ describe Movement do
         expect(moves_test.is_legal_moves(cell)).to eq(eligible)
       end
 
+    end
+
+    context 'when black king is in check situation' do
+      before do
+        board.make_board('2Q3k1/6pp/5r1q/6N1/1P5P/6P1/5P2/6K1 b - - 0 1')
+      end
+
+      it 'selecting the rook for blocking, show the correct list of move' do
+        cell = board.cell('f6')
+        eligible = %w[f8]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
+
+      it 'selecting the black king, show that there is not move' do
+        cell = board.cell('g8')
+        eligible = %w[]
+        expect(moves_test.find_moves(cell)).to eq(eligible)
+      end
     end
 
 
