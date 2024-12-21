@@ -1,6 +1,11 @@
 # Simple Chess Game
 
-Naive implementation of a chess game. This a first step (almost) in a chess programming world, this project is a great opportunity to discover the challenges involved in creating a chess program. That nicely points out why designing and thinking ahead about the structure is beneficial in programming.
+Naive implementation of a chess game, serving as an initial step into the world of chess programming.
+
+
+This project is a great opportunity to discover the challenges involved in creating a chess program. That nicely points out why designing and thinking ahead about the structure is beneficial in programming.
+
+
 Commits are made succinct on purpose to track the step-by-step evolution of the program.
 
 
