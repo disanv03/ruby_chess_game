@@ -1,6 +1,10 @@
 # Simple Chess Game
 
-Enjoy a minimalist chess game right in your terminal. This project is currenlty under development. Comments and suggestions are welcome.
+Naive implementation of a chess game. This a first step (almost) in a chess programming world, this project is a great opportunity to discover the challenges involved in creating a chess program. That nicely points out why designing and thinking ahead about the structure is beneficial in programming.
+Commits are made succinct on purpose to track the step-by-step evolution of the program.
+
+
+This project is currenlty under development. Comments and suggestions are welcome.
 
 ### Usage
 
