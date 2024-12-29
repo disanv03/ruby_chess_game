@@ -13,7 +13,14 @@ This project is currenlty under development. Comments and suggestions are welcom
 
 ### Usage
 
-comming soon
+[Standard Algebraic Notation](https://en.wikipedia.org/wiki/Algebraic_notation_chess) would be used for moving pieces. 
+
+
+Each piece is identified by the an uppercase letter, giving `K` for king, `Q` for queen, `R` for rook, `B` for bishop, and `N` for knight.
+
+
+So, moving a knight as a first move could be either `Nc3` or `Nf3`. For pawn moves, only the destination square is enough to make a move, for example `d4` (pawn moves to d4).
+
 
 ### Installation
 
@@ -21,7 +28,7 @@ comming soon
 
 ### Credits
 
-Special credits to [crespire](https://github.com/crespire/ruby_chess) and his chess game implementation for being the roadmap of this project.
+Special credits to [crespire](https://github.com/crespire/ruby_chess). His chess game project implementation is the roadmap of this project.
 
 ### Contact
 
