@@ -32,5 +32,5 @@ Special credits to [crespire](https://github.com/crespire/ruby_chess). His chess
 
 ### Contact
 
-Feel to send me an email if you have any comments. 
+Feel free to send me an email if you have any comments. 
 Contact me at: gnuno_03 [at] hotmail [dot] com
